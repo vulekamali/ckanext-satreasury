@@ -9,15 +9,6 @@
     height: auto;
     margin-top: 20px; }
 
-/* override CKAN stuff */
-.account-masthead {
-  background: white;
-  color: #444444; }
-  .account-masthead .account ul li {
-    border-left: 0px; }
-    .account-masthead .account ul li a {
-      color: #842f22; }
-
 .site-footer .openup-logo {
   height: 60px;
   width: auto;
