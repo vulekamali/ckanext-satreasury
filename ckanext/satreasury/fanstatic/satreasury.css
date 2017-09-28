@@ -1,0 +1,21 @@
+header.satreasury-masthead {
+  background-color: white;
+  padding: 5px 0px; }
+  header.satreasury-masthead img.treasury-logo {
+    height: 70px;
+    width: auto; }
+  header.satreasury-masthead img.sa-flag {
+    width: 40px;
+    height: auto;
+    margin-top: 20px; }
+
+/* override CKAN stuff */
+header.account-masthead {
+  background: white;
+  color: #444444; }
+  header.account-masthead .account ul li {
+    border-left: 0px; }
+    header.account-masthead .account ul li a {
+      color: #842f22; }
+
+/*# sourceMappingURL=satreasury.css.map */
