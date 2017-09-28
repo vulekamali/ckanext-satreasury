@@ -24,4 +24,8 @@ class SATreasuryPlugin(plugins.SingletonPlugin):
         return facets_dict
 
     def organization_facets(self, facets_dict, organization_type, package_type):
+        del facets_dict['organization']
+        del facets_dict['groups']
+        del facets_dict['tags']
+        del facets_dict['license_id']
         return facets_dict
