@@ -1,0 +1,14 @@
+{% ckan_extends %}
+
+{% block nums %}
+  <div class="nums">
+    <dl>
+      {% if pkg.financial_year %}
+        <dt>{{ _('Financial Year') }}</dt>
+        <dd><nobr>{{ pkg.financial_year[0] }}</a></nobr></dd>
+      {% endif %}
+      <dt>{{ _('Followers') }}</dt>
+      <dd>{{ h.SI_number_span(h.follow_count('dataset', pkg.id)) }}</dd>
+    </dl>
+  </div>
+{% endblock %}
