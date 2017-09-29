@@ -3,6 +3,8 @@ import datetime
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 
+import ckanext.satreasury.helpers as helpers
+
 
 class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     """ Plugin for the SA National Treasury CKAN website.
@@ -79,7 +81,11 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     # ITemplateHelpers
     def get_helpers(self):
-        return {'financial_years': load_financial_years}
+        return {
+            'financial_years': load_financial_years,
+            'latest_financial_year': helpers.latest_financial_year,
+            'packages_for_latest_financial_year': helpers.packages_for_latest_financial_year,
+        }
 
 
 def create_financial_years():
