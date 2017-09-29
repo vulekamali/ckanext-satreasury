@@ -15,6 +15,10 @@
 }
 
 .site-footer {
+  a {
+    color: white;
+  }
+
   .openup-logo {
     height: 60px;
     width: auto;
@@ -22,5 +26,4 @@
     background-color: white;
     border-radius: 5px;
   }
-
 }
