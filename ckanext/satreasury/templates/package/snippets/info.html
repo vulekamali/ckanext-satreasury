@@ -5,7 +5,7 @@
     <dl>
       {% if pkg.financial_year %}
         <dt>{{ _('Financial Year') }}</dt>
-        <dd><nobr>{{ pkg.financial_year[0] }}</a></nobr></dd>
+        <dd><nobr>{% link_for pkg.financial_year[0], controller='package', action='search', vocab_financial_years=pkg.financial_year[0] %}</nobr></dd>
       {% endif %}
       <dt>{{ _('Followers') }}</dt>
       <dd>{{ h.SI_number_span(h.follow_count('dataset', pkg.id)) }}</dd>

@@ -24,6 +24,7 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         del facets_dict['groups']
         del facets_dict['tags']
         del facets_dict['license_id']
+        facets_dict['vocab_financial_years'] = 'Financial Year'
         return facets_dict
 
     def group_facets(self, facets_dict, group_type, package_type):
