@@ -1,57 +1,17 @@
-.. You should enable this project on travis-ci.org and coveralls.io to make
-   these badges work. The necessary Travis and Coverage config files have been
-   generated for you.
-
-.. image:: https://travis-ci.org//ckanext-satreasury.svg?branch=master
-    :target: https://travis-ci.org//ckanext-satreasury
-
-.. image:: https://coveralls.io/repos//ckanext-satreasury/badge.svg
-  :target: https://coveralls.io/r//ckanext-satreasury
-
-.. image:: https://pypip.in/download/ckanext-satreasury/badge.svg
-    :target: https://pypi.python.org/pypi//ckanext-satreasury/
-    :alt: Downloads
-
-.. image:: https://pypip.in/version/ckanext-satreasury/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-satreasury/
-    :alt: Latest Version
-
-.. image:: https://pypip.in/py_versions/ckanext-satreasury/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-satreasury/
-    :alt: Supported Python versions
-
-.. image:: https://pypip.in/status/ckanext-satreasury/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-satreasury/
-    :alt: Development Status
-
-.. image:: https://pypip.in/license/ckanext-satreasury/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-satreasury/
-    :alt: License
-
-=============
+==================
 ckanext-satreasury
-=============
+==================
 
-.. Put a description of your extension here:
-   What does it do? What features does it have?
-   Consider including some screenshots or embedding a video!
+This is the South Africa National Treasury CKAN theme extension. It customises CKAN for Treasury's requirements.
 
+Features:
 
-------------
-Requirements
-------------
-
-For example, you might want to mention here which versions of CKAN this
-extension works with.
-
+- de-emphasise Organisations and Groups
+- add a financial year tag
 
 ------------
 Installation
 ------------
-
-.. Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
 
 To install ckanext-satreasury:
 
@@ -71,18 +31,6 @@ To install ckanext-satreasury:
 
      sudo service apache2 reload
 
-
----------------
-Config Settings
----------------
-
-Document any optional config settings here. For example::
-
-    # The minimum number of hours to wait before re-checking a resource
-    # (optional, default: 24).
-    ckanext.satreasury.some_setting = some_default_value
-
-
 ------------------------
 Development Installation
 ------------------------
@@ -94,73 +42,3 @@ do::
     cd ckanext-satreasury
     python setup.py develop
     pip install -r dev-requirements.txt
-
-
------------------
-Running the Tests
------------------
-
-To run the tests, do::
-
-    nosetests --nologcapture --with-pylons=test.ini
-
-To run the tests and produce a coverage report, first make sure you have
-coverage installed in your virtualenv (``pip install coverage``) then run::
-
-    nosetests --nologcapture --with-pylons=test.ini --with-coverage --cover-package=ckanext.satreasury --cover-inclusive --cover-erase --cover-tests
-
-
----------------------------------
-Registering ckanext-satreasury on PyPI
----------------------------------
-
-ckanext-satreasury should be availabe on PyPI as
-https://pypi.python.org/pypi/ckanext-satreasury. If that link doesn't work, then
-you can register the project on PyPI for the first time by following these
-steps:
-
-1. Create a source distribution of the project::
-
-     python setup.py sdist
-
-2. Register the project::
-
-     python setup.py register
-
-3. Upload the source distribution to PyPI::
-
-     python setup.py sdist upload
-
-4. Tag the first release of the project on GitHub with the version number from
-   the ``setup.py`` file. For example if the version number in ``setup.py`` is
-   0.0.1 then do::
-
-       git tag 0.0.1
-       git push --tags
-
-
-----------------------------------------
-Releasing a New Version of ckanext-satreasury
-----------------------------------------
-
-ckanext-satreasury is availabe on PyPI as https://pypi.python.org/pypi/ckanext-satreasury.
-To publish a new version to PyPI follow these steps:
-
-1. Update the version number in the ``setup.py`` file.
-   See `PEP 440 <http://legacy.python.org/dev/peps/pep-0440/#public-version-identifiers>`_
-   for how to choose version numbers.
-
-2. Create a source distribution of the new version::
-
-     python setup.py sdist
-
-3. Upload the source distribution to PyPI::
-
-     python setup.py sdist upload
-
-4. Tag the new release of the project on GitHub with the version number from
-   the ``setup.py`` file. For example if the version number in ``setup.py`` is
-   0.0.2 then do::
-
-       git tag 0.0.2
-       git push --tags
