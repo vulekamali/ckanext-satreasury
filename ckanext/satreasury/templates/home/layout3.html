@@ -21,8 +21,20 @@
 
       </div>
       <div class="span6 col1">
-        {% block stats %}
-        {% endblock %}
+
+        <div class="box">
+          <header class="module-heading">
+            <h3>Browse Financial Years</h3>
+          </header>
+          <div class="module-content">
+            <ul class="unstyled">
+              {% set years = h.active_financial_years()|reverse %}
+              {% for year in years %}
+              <li>{% link_for year, controller='package', action='search', vocab_financial_years=year %}</li>
+              {% endfor %}
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

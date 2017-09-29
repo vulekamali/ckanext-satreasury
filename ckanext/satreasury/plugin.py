@@ -83,6 +83,7 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     def get_helpers(self):
         return {
             'financial_years': load_financial_years,
+            'active_financial_years': helpers.active_financial_years,
             'latest_financial_year': helpers.latest_financial_year,
             'packages_for_latest_financial_year': helpers.packages_for_latest_financial_year,
         }
