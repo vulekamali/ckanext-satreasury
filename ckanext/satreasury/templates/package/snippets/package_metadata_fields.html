@@ -1,0 +1,20 @@
+{% ckan_extends %}
+
+{% block package_metadata_fields %}
+
+  <div class="control-group">
+    <label class="control-label" for="field-financial_year">{{ _("Financial Year") }}</label>
+    <div class="controls">
+      <select id="field-financial_year" name="financial_year" data-module="autocomplete">
+        <option value="">(none)</option>
+        {% set years = h.financial_years()|reverse %}
+        {% for year in years %}
+          <option value="{{ year }}" {% if year in data.get('financial_year', []) %}selected="selected"{% endif %}>{{ year }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  {{ super() }}
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% ckan_extends %}
+
+{% block package_additional_info %}
+  {% if pkg_dict.financial_year %}
+    <tr>
+      <th scope="row" class="dataset-label">{{ _('Financial Year') }}</th>
+      <td class="dataset-details">{{ pkg_dict.financial_year[0] }}</td>
+    </tr>
+  {% endif %}
+
+  {{ super() }}
+{% endblock %}
