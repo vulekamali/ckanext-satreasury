@@ -41,6 +41,8 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         del facets_dict['license_id']
         facets_dict['vocab_financial_years'] = 'Financial Year'
         facets_dict['vocab_provinces'] = 'Province'
+        # move format to the end
+        facets_dict['res_format'] = facets_dict.pop('res_format')
         return facets_dict
 
     def group_facets(self, facets_dict, group_type, package_type):
@@ -51,6 +53,10 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         del facets_dict['groups']
         del facets_dict['tags']
         del facets_dict['license_id']
+        facets_dict['vocab_financial_years'] = 'Financial Year'
+        facets_dict['vocab_provinces'] = 'Province'
+        # move format to the end
+        facets_dict['res_format'] = facets_dict.pop('res_format')
         return facets_dict
 
     # IDatasetForm
