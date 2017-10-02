@@ -27,3 +27,10 @@
     border-radius: 5px;
   }
 }
+
+/* ckan overrides */
+
+// hero on homepage
+[role=main] {
+  min-height: 250px;
+}

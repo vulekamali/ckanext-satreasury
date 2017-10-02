@@ -18,4 +18,8 @@
   background-color: white;
   border-radius: 5px; }
 
+/* ckan overrides */
+[role=main] {
+  min-height: 250px; }
+
 /*# sourceMappingURL=satreasury.css.map */
