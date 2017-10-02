@@ -8,5 +8,12 @@
     </tr>
   {% endif %}
 
+  {% if pkg_dict.province %}
+    <tr>
+      <th scope="row" class="dataset-label">{{ _('Province') }}</th>
+      <td class="dataset-details">{{ pkg_dict.province[0] }}</td>
+    </tr>
+  {% endif %}
+
   {{ super() }}
 {% endblock %}

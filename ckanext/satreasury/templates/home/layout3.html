@@ -23,7 +23,7 @@
 
         <div class="box">
           <header class="module-heading">
-            <h3>Financial Year {{ h.latest_financial_year() }}</h3>
+            <h3>Datasets for Financial Year {{ h.latest_financial_year() }}</h3>
           </header>
           <div class="module-content">
             {% snippet 'snippets/package_list.html', packages=h.packages_for_latest_financial_year() %}
@@ -35,7 +35,7 @@
 
         <div class="box">
           <header class="module-heading">
-            <h3>Browse Financial Years</h3>
+            <h3>Browse by Financial Year</h3>
           </header>
           <div class="module-content">
             <ul class="unstyled">
@@ -43,6 +43,22 @@
               {% for year in years %}
               <li>{% link_for year, controller='package', action='search', vocab_financial_years=year %}</li>
               {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="box">
+          <header class="module-heading">
+            <h3>Browse by Province</h3>
+          </header>
+          <div class="module-content">
+            <ul class="unstyled">
+              {% for province in h.provinces() %}
+              <li>{% link_for province, controller='package', action='search', vocab_provinces=province %}</li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
 

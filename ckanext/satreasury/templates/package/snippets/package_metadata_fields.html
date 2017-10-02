@@ -15,6 +15,18 @@
     </div>
   </div>
 
+  <div class="control-group">
+    <label class="control-label" for="field-province">{{ _("Province") }}</label>
+    <div class="controls">
+      <select id="field-province" name="province" data-module="autocomplete">
+        <option value="">(none)</option>
+        {% for province in h.provinces() %}
+          <option value="{{ province }}" {% if province in data.get('province', []) %}selected="selected"{% endif %}>{{ province }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
   {{ super() }}
 
 {% endblock %}
