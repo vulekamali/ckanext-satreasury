@@ -6,6 +6,19 @@ import ckan.plugins.toolkit as tk
 import ckanext.satreasury.helpers as helpers
 
 
+PROVINCES = [
+    'Eastern Cape',
+    'Free State',
+    'Gauteng',
+    'KwaZulu-Natal',
+    'Limpopo',
+    'Mpumalanga',
+    'North West',
+    'Northern Cape',
+    'Western Cape',
+]
+
+
 class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     """ Plugin for the SA National Treasury CKAN website.
     """
@@ -27,6 +40,9 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         del facets_dict['tags']
         del facets_dict['license_id']
         facets_dict['vocab_financial_years'] = 'Financial Year'
+        facets_dict['vocab_provinces'] = 'Province'
+        # move format to the end
+        facets_dict['res_format'] = facets_dict.pop('res_format')
         return facets_dict
 
     def group_facets(self, facets_dict, group_type, package_type):
@@ -37,6 +53,10 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         del facets_dict['groups']
         del facets_dict['tags']
         del facets_dict['license_id']
+        facets_dict['vocab_financial_years'] = 'Financial Year'
+        facets_dict['vocab_provinces'] = 'Province'
+        # move format to the end
+        facets_dict['res_format'] = facets_dict.pop('res_format')
         return facets_dict
 
     # IDatasetForm
@@ -46,7 +66,12 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         schema.update({
             'financial_year': [
                 tk.get_converter('convert_from_tags')('financial_years'),
-                tk.get_validator('ignore_missing')]
+                tk.get_validator('ignore_missing')
+            ],
+            'province': [
+                tk.get_converter('convert_from_tags')('provinces'),
+                tk.get_validator('ignore_missing')
+            ],
         })
         return schema
 
@@ -75,6 +100,10 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             'financial_year': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('financial_years')
+            ],
+            'province': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_tags')('provinces')
             ]
         })
         return schema
@@ -83,6 +112,7 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     def get_helpers(self):
         return {
             'financial_years': load_financial_years,
+            'provinces': load_provinces,
             'active_financial_years': helpers.active_financial_years,
             'latest_financial_year': helpers.latest_financial_year,
             'packages_for_latest_financial_year': helpers.packages_for_latest_financial_year,
@@ -122,3 +152,31 @@ def required_financial_years():
     return ['%s-%s' % (y, y + 1 - 2000)
             for y in xrange(2007, datetime.date.today().year + 2)
             ]
+
+
+def create_provinces():
+    """ Ensure all necessary province tags exist.
+    """
+    user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
+    context = {'user': user['name']}
+    try:
+        vocab = tk.get_action('vocabulary_show')(context, {'id': 'provinces'})
+    except tk.ObjectNotFound:
+        vocab = tk.get_action('vocabulary_create')(context, {'name': 'provinces'})
+
+    tag_create = tk.get_action('tag_create')
+    existing = set(t['name'] for t in vocab['tags'])
+    for province in set(PROVINCES) - existing:
+        tag_create(context, {
+            'name': province,
+            'vocabulary_id': vocab['id'],
+        })
+
+
+def load_provinces():
+    create_provinces()
+    try:
+        tag_list = tk.get_action('tag_list')
+        return tag_list(data_dict={'vocabulary_id': 'provinces'})
+    except tk.ObjectNotFound:
+        return None

@@ -12,7 +12,7 @@
     (_('Relevance'), 'score desc, metadata_modified desc'),
     (_('Name Ascending'), 'title_string asc'),
     (_('Name Descending'), 'title_string desc'),
-    (_('Financial Year Descending'), 'financial_year desc'),
+    (_('Financial Year Descending'), 'financial_year desc, title_string asc'),
     (_('Last Modified'), 'metadata_modified desc'),
     (_('Popular'), 'views_recent desc') if g.tracking_enabled else (false, false) ]
   %}
