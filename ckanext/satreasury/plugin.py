@@ -36,12 +36,12 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     # IFacets
     def dataset_facets(self, facets_dict, package_type):
         del facets_dict['organization']
-        del facets_dict['groups']
         del facets_dict['tags']
         del facets_dict['license_id']
         facets_dict['vocab_financial_years'] = 'Financial Year'
         facets_dict['vocab_provinces'] = 'Province'
-        # move format to the end
+        # move format and groups to the end
+        facets_dict['groups'] = facets_dict.pop('groups')
         facets_dict['res_format'] = facets_dict.pop('res_format')
         return facets_dict
 
