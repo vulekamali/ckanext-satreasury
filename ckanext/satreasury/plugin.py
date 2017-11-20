@@ -18,6 +18,8 @@ PROVINCES = [
     'Western Cape',
 ]
 
+SPHERES = ['national', 'provincial']
+
 
 class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     """ Plugin for the SA National Treasury CKAN website.
@@ -39,6 +41,7 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         del facets_dict['tags']
         del facets_dict['license_id']
         facets_dict['vocab_financial_years'] = 'Financial Year'
+        facets_dict['vocab_spheres'] = 'Sphere of Government'
         facets_dict['vocab_provinces'] = 'Province'
         # move format and groups to the end
         facets_dict['groups'] = facets_dict.pop('groups')
@@ -70,6 +73,10 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             ],
             'province': [
                 tk.get_converter('convert_from_tags')('provinces'),
+                tk.get_validator('ignore_missing')
+            ],
+            'sphere': [
+                tk.get_converter('convert_from_tags')('spheres'),
                 tk.get_validator('ignore_missing')
             ],
         })
@@ -104,7 +111,11 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             'province': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('provinces')
-            ]
+            ],
+            'sphere': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_tags')('spheres')
+            ],
         })
         return schema
 
@@ -113,6 +124,7 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         return {
             'financial_years': load_financial_years,
             'provinces': load_provinces,
+            'spheres': load_spheres,
             'active_financial_years': helpers.active_financial_years,
             'latest_financial_year': helpers.latest_financial_year,
             'packages_for_latest_financial_year': helpers.packages_for_latest_financial_year,
@@ -178,5 +190,33 @@ def load_provinces():
     try:
         tag_list = tk.get_action('tag_list')
         return tag_list(data_dict={'vocabulary_id': 'provinces'})
+    except tk.ObjectNotFound:
+        return None
+
+
+def create_spheres():
+    """ Ensure all necessary spheres tags exist.
+    """
+    user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
+    context = {'user': user['name']}
+    try:
+        vocab = tk.get_action('vocabulary_show')(context, {'id': 'spheres'})
+    except tk.ObjectNotFound:
+        vocab = tk.get_action('vocabulary_create')(context, {'name': 'spheres'})
+
+    tag_create = tk.get_action('tag_create')
+    existing = set(t['name'] for t in vocab['tags'])
+    for sphere in set(SPHERES) - existing:
+        tag_create(context, {
+            'name': sphere,
+            'vocabulary_id': vocab['id'],
+        })
+
+
+def load_spheres():
+    create_spheres()
+    try:
+        tag_list = tk.get_action('tag_list')
+        return tag_list(data_dict={'vocabulary_id': 'spheres'})
     except tk.ObjectNotFound:
         return None
