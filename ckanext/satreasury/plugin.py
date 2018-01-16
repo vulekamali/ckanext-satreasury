@@ -37,13 +37,13 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     # IFacets
     def dataset_facets(self, facets_dict, package_type):
-        del facets_dict['organization']
         del facets_dict['tags']
-        del facets_dict['license_id']
         facets_dict['vocab_financial_years'] = 'Financial Year'
         facets_dict['vocab_spheres'] = 'Sphere of Government'
         facets_dict['vocab_provinces'] = 'Province'
-        # move format and groups to the end
+        # move to the end
+        facets_dict['organization'] = facets_dict.pop('organization')
+        facets_dict['license_id'] = facets_dict.pop('license_id')
         facets_dict['groups'] = facets_dict.pop('groups')
         facets_dict['res_format'] = facets_dict.pop('res_format')
         return facets_dict
@@ -52,14 +52,14 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         return facets_dict
 
     def organization_facets(self, facets_dict, organization_type, package_type):
-        del facets_dict['organization']
-        del facets_dict['groups']
         del facets_dict['tags']
-        del facets_dict['license_id']
         facets_dict['vocab_financial_years'] = 'Financial Year'
         facets_dict['vocab_provinces'] = 'Province'
-        # move format to the end
+        # move to the end
         facets_dict['res_format'] = facets_dict.pop('res_format')
+        facets_dict['organization'] = facets_dict.pop('organization')
+        facets_dict['groups'] = facets_dict.pop('groups')
+        facets_dict['license_id'] = facets_dict.pop('license_id')
         return facets_dict
 
     # IDatasetForm
