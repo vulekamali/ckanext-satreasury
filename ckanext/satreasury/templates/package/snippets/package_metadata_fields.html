@@ -27,6 +27,18 @@
     </div>
   </div>
 
+  <div class="control-group">
+    <label class="control-label" for="field-sphere">{{ _("Sphere") }}</label>
+    <div class="controls">
+      <select id="field-sphere" name="sphere" data-module="autocomplete">
+        <option value="">(none)</option>
+        {% for sphere in h.spheres() %}
+          <option value="{{ sphere }}" {% if sphere in data.get('sphere', []) %}selected="selected"{% endif %}>{{ sphere }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
   {{ super() }}
 
 {% endblock %}
