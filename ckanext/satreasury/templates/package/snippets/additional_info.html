@@ -15,5 +15,12 @@
     </tr>
   {% endif %}
 
+  {% if pkg_dict.sphere %}
+    <tr>
+      <th scope="row" class="dataset-label">{{ _('Sphere') }}</th>
+      <td class="dataset-details">{{ pkg_dict.sphere[0] }}</td>
+    </tr>
+  {% endif %}
+
   {{ super() }}
 {% endblock %}
