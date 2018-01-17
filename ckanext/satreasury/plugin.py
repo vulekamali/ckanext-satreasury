@@ -21,7 +21,7 @@ PROVINCES = [
 SPHERES = ['national', 'provincial']
 
 
-class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
+class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     """ Plugin for the SA National Treasury CKAN website.
     """
     plugins.implements(plugins.IConfigurer)
@@ -64,7 +64,7 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     # IDatasetForm
     def show_package_schema(self):
-        schema = super(SATreasuryPlugin, self).show_package_schema()
+        schema = super(SATreasuryDatasetPlugin, self).show_package_schema()
         schema['tags']['__extras'].append(tk.get_converter('free_tags_only'))
         schema.update({
             'financial_year': [
@@ -87,12 +87,12 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         return schema
 
     def create_package_schema(self):
-        schema = super(SATreasuryPlugin, self).create_package_schema()
+        schema = super(SATreasuryDatasetPlugin, self).create_package_schema()
         schema = self._modify_package_schema(schema)
         return schema
 
     def update_package_schema(self):
-        schema = super(SATreasuryPlugin, self).update_package_schema()
+        schema = super(SATreasuryDatasetPlugin, self).update_package_schema()
         schema = self._modify_package_schema(schema)
         return schema
 
@@ -228,3 +228,53 @@ def load_spheres():
         return tag_list(data_dict={'vocabulary_id': 'spheres'})
     except tk.ObjectNotFound:
         return None
+
+
+class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizationForm):
+    """ Plugin for the SA National Treasury CKAN website.
+    """
+
+    plugins.implements(plugins.IGroupForm, inherit=True)
+
+    # IGroupForm
+
+    def group_types(self):
+        return ('organization',)
+
+    def group_controller(self):
+        return 'organization'
+
+    def form_to_db_schema(self):
+         # Import core converters and validators
+        _convert_to_extras = plugins.toolkit.get_converter('convert_to_extras')
+        _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
+
+        schema = super(SATreasuryOrganizationPlugin, self).form_to_db_schema()
+        schema = self._modify_group_schema(schema)
+
+        default_validators = [_ignore_missing, _convert_to_extras]
+        schema.update({
+            'url': default_validators
+        })
+        return schema
+
+    def db_to_form_schema(self):
+        # Import core converters and validators
+        _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
+
+        schema = super(SATreasuryOrganizationPlugin, self).form_to_db_schema()
+
+        default_validators = [custom_convert_from_extras, _ignore_missing]
+        schema.update({
+            'url': default_validators
+        })
+        return schema
+
+def custom_convert_from_extras(key, data, errors, context):
+    for data_key in data.keys():
+        if (data_key[0] == 'extras'):
+            data_value = data[data_key]
+            if(data_value['key'] == key[-1]):
+                data[key] = data_value['value']
+                del data[data_key]
+                break
