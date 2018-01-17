@@ -79,6 +79,10 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_converter('convert_from_tags')('spheres'),
                 tk.get_validator('ignore_missing')
             ],
+            'methodology': [
+                tk.get_converter('convert_from_extras'),
+                tk.get_validator('ignore_missing')
+            ],
         })
         return schema
 
@@ -115,6 +119,10 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             'sphere': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('spheres')
+            ],
+            'methodology': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_extras')
             ],
         })
         return schema
