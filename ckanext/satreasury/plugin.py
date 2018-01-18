@@ -2,10 +2,12 @@ import datetime
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
-from ckan.logic.validators import Missing
+import ckan.logic.schema as default_schemas
 
 import ckanext.satreasury.helpers as helpers
+import logging
 
+log = logging.getLogger(__name__)
 
 PROVINCES = [
     'Eastern Cape',
@@ -262,20 +264,18 @@ class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizati
         return schema
 
     def db_to_form_schema(self):
-        # Import core validators
         _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
-
-        schema = super(SATreasuryOrganizationPlugin, self).form_to_db_schema()
-
         default_validators = [convert_from_group_extras, _ignore_missing]
+
+        # This clobbers whatever came before it, which right now is None
+        schema = default_schemas.default_show_group_schema()
         schema.update({
             'url': default_validators,
             'telephone': default_validators,
             'facebook_id': default_validators,
             'twitter_id': default_validators,
-        })
+         })
         return schema
-
 
 # https://github.com/ckan/ckanext-scheming/blob/083712d6bc00fcb5aeaf91a614769ac16d5c7a3b/ckanext/scheming/converters.py#L3-L23
 def convert_from_group_extras(key, data, errors, context):
@@ -292,7 +292,6 @@ def convert_from_group_extras(key, data, errors, context):
 
     for data_key, data_value in data.iteritems():
         if (data_key[0] == 'extras'
-            and type(data_value) != Missing
             and 'key' in data_value
             and data_value['key'] == key[-1]):
             data[key] = data_value['value']
