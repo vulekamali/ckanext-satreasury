@@ -2,6 +2,7 @@ import datetime
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
+from ckan.logic.validators import Missing
 
 import ckanext.satreasury.helpers as helpers
 
@@ -250,21 +251,8 @@ class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizati
         _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
 
         schema = super(SATreasuryOrganizationPlugin, self).form_to_db_schema()
-        schema = self._modify_group_schema(schema)
 
         default_validators = [_ignore_missing, _convert_to_extras]
-        schema.update({
-            'url': default_validators
-        })
-        return schema
-
-    def db_to_form_schema(self):
-        # Import core converters and validators
-        _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
-
-        schema = super(SATreasuryOrganizationPlugin, self).form_to_db_schema()
-
-        default_validators = [custom_convert_from_extras, _ignore_missing]
         schema.update({
             'url': default_validators,
             'telephone': default_validators,
@@ -273,11 +261,42 @@ class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizati
         })
         return schema
 
-def custom_convert_from_extras(key, data, errors, context):
-    for data_key in data.keys():
-        if (data_key[0] == 'extras'):
-            data_value = data[data_key]
-            if(data_value['key'] == key[-1]):
-                data[key] = data_value['value']
-                del data[data_key]
-                break
+    def db_to_form_schema(self):
+        # Import core validators
+        _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
+
+        schema = super(SATreasuryOrganizationPlugin, self).form_to_db_schema()
+
+        default_validators = [convert_from_group_extras, _ignore_missing]
+        schema.update({
+            'url': default_validators,
+            'telephone': default_validators,
+            'facebook_id': default_validators,
+            'twitter_id': default_validators,
+        })
+        return schema
+
+
+# https://github.com/ckan/ckanext-scheming/blob/083712d6bc00fcb5aeaf91a614769ac16d5c7a3b/ckanext/scheming/converters.py#L3-L23
+def convert_from_group_extras(key, data, errors, context):
+    '''Converts values from extras, tailored for groups.'''
+
+    def remove_from_extras(data, key):
+        to_remove = []
+        for data_key, data_value in data.iteritems():
+            if (data_key[0] == 'extras'
+                    and data_key[1] == key):
+                to_remove.append(data_key)
+        for item in to_remove:
+            del data[item]
+
+    for data_key, data_value in data.iteritems():
+        if (data_key[0] == 'extras'
+            and type(data_value) != Missing
+            and 'key' in data_value
+            and data_value['key'] == key[-1]):
+            data[key] = data_value['value']
+            break
+    else:
+        return
+    remove_from_extras(data, data_key[1])
