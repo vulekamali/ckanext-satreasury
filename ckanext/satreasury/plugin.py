@@ -257,6 +257,7 @@ class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizati
         default_validators = [_ignore_missing, _convert_to_extras]
         schema.update({
             'url': default_validators,
+            'email': default_validators,
             'telephone': default_validators,
             'facebook_id': default_validators,
             'twitter_id': default_validators,
@@ -271,6 +272,7 @@ class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizati
         schema = default_schemas.default_show_group_schema()
         schema.update({
             'url': default_validators,
+            'email': default_validators,
             'telephone': default_validators,
             'facebook_id': default_validators,
             'twitter_id': default_validators,
