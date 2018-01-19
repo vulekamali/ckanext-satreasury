@@ -80,7 +80,8 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points='''
         [ckan.plugins]
-        satreasury=ckanext.satreasury.plugin:SATreasuryPlugin
+        satreasury-dataset=ckanext.satreasury.plugin:SATreasuryDatasetPlugin
+        satreasury-organization=ckanext.satreasury.plugin:SATreasuryOrganizationPlugin
 
         [babel.extractors]
         ckan = ckan.lib.extract:extract_ckan

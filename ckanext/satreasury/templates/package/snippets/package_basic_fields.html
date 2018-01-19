@@ -1,0 +1,5 @@
+{% ckan_extends %}
+
+{% block package_basic_fields_custom %}
+  {{ form.markdown('methodology', label=_('Methodology'), id='field-methodology', placeholder=_('What methodology did you follow when gathering and analysing the data? Include things that will help others understand the possible limitations to your dataset or analysis. What should they bear in mind when working with your data?'), value=data.methodology, error=errors.methodology) }}
+{% endblock %}

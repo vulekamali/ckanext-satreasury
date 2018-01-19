@@ -1,0 +1,17 @@
+{% ckan_extends %}
+
+  {% block custom_fields %}
+
+    {{ form.input('url', label=_('Website URL'), id='field-url', placeholder=_('https://my.org.za'), value=data.url, error=errors.url, classes=['control-full']) }}
+
+    {{ form.input('email', label=_('Email Address'), id='field-email', placeholder=_('info@treasury.gov.za'), value=data.email, error=errors.email, classes=['control-full']) }}
+
+    {{ form.input('telephone', label=_('Telephone'), id='field-telephone', placeholder=_('012 315 5111'), value=data.telephone, error=errors.telephone, classes=['control-full']) }}
+
+    {{ form.input('facebook_id', label=_('Facebook ID'), id='field-facebook_id', placeholder=_('NationalTreasurySouthAfrica'), value=data.facebook_id, error=errors.facebook_id, classes=['control-full']) }}
+
+    {{ form.input('twitter_id', label=_('Twitter Handel'), id='field-twitter_id', placeholder=_('@TreasuryRSA'), value=data.twitter_id, error=errors.twitter_id, classes=['control-full']) }}
+
+    {{ super() }}
+
+  {% endblock %}

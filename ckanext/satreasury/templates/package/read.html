@@ -1,0 +1,18 @@
+{% ckan_extends %}
+
+{% block package_notes %}
+      {% if pkg.notes %}
+        <h2>About this Dataset</h2>
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
+        </div>
+      {% endif %}
+
+      {% if pkg.methodology %}
+        <h2>Methodoly Used in Gathering and Analysis</h2>
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'methodology')) }}
+        </div>
+      {% endif %}
+
+{% endblock %}

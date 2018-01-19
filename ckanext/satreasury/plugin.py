@@ -2,9 +2,12 @@ import datetime
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
+import ckan.logic.schema as default_schemas
 
 import ckanext.satreasury.helpers as helpers
+import logging
 
+log = logging.getLogger(__name__)
 
 PROVINCES = [
     'Eastern Cape',
@@ -21,7 +24,7 @@ PROVINCES = [
 SPHERES = ['national', 'provincial']
 
 
-class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
+class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     """ Plugin for the SA National Treasury CKAN website.
     """
     plugins.implements(plugins.IConfigurer)
@@ -64,7 +67,7 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     # IDatasetForm
     def show_package_schema(self):
-        schema = super(SATreasuryPlugin, self).show_package_schema()
+        schema = super(SATreasuryDatasetPlugin, self).show_package_schema()
         schema['tags']['__extras'].append(tk.get_converter('free_tags_only'))
         schema.update({
             'financial_year': [
@@ -79,16 +82,20 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_converter('convert_from_tags')('spheres'),
                 tk.get_validator('ignore_missing')
             ],
+            'methodology': [
+                tk.get_converter('convert_from_extras'),
+                tk.get_validator('ignore_missing')
+            ],
         })
         return schema
 
     def create_package_schema(self):
-        schema = super(SATreasuryPlugin, self).create_package_schema()
+        schema = super(SATreasuryDatasetPlugin, self).create_package_schema()
         schema = self._modify_package_schema(schema)
         return schema
 
     def update_package_schema(self):
-        schema = super(SATreasuryPlugin, self).update_package_schema()
+        schema = super(SATreasuryDatasetPlugin, self).update_package_schema()
         schema = self._modify_package_schema(schema)
         return schema
 
@@ -115,6 +122,10 @@ class SATreasuryPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             'sphere': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('spheres')
+            ],
+            'methodology': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_extras')
             ],
         })
         return schema
@@ -220,3 +231,73 @@ def load_spheres():
         return tag_list(data_dict={'vocabulary_id': 'spheres'})
     except tk.ObjectNotFound:
         return None
+
+
+class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizationForm):
+    """ Plugin for the SA National Treasury CKAN website.
+    """
+
+    plugins.implements(plugins.IGroupForm, inherit=True)
+
+    # IGroupForm
+
+    def group_types(self):
+        return ('organization',)
+
+    def group_controller(self):
+        return 'organization'
+
+    def form_to_db_schema(self):
+         # Import core converters and validators
+        _convert_to_extras = plugins.toolkit.get_converter('convert_to_extras')
+        _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
+
+        schema = super(SATreasuryOrganizationPlugin, self).form_to_db_schema()
+
+        default_validators = [_ignore_missing, _convert_to_extras]
+        schema.update({
+            'url': default_validators,
+            'email': default_validators,
+            'telephone': default_validators,
+            'facebook_id': default_validators,
+            'twitter_id': default_validators,
+        })
+        return schema
+
+    def db_to_form_schema(self):
+        _ignore_missing = plugins.toolkit.get_validator('ignore_missing')
+        default_validators = [convert_from_group_extras, _ignore_missing]
+
+        # This clobbers whatever came before it, which right now is None
+        schema = default_schemas.default_show_group_schema()
+        schema.update({
+            'url': default_validators,
+            'email': default_validators,
+            'telephone': default_validators,
+            'facebook_id': default_validators,
+            'twitter_id': default_validators,
+         })
+        return schema
+
+# https://github.com/ckan/ckanext-scheming/blob/083712d6bc00fcb5aeaf91a614769ac16d5c7a3b/ckanext/scheming/converters.py#L3-L23
+def convert_from_group_extras(key, data, errors, context):
+    '''Converts values from extras, tailored for groups.'''
+
+    def remove_from_extras(data, key):
+        to_remove = []
+        for data_key, data_value in data.iteritems():
+            if (data_key[0] == 'extras'
+                    and data_key[1] == key):
+                to_remove.append(data_key)
+        for item in to_remove:
+            del data[item]
+
+    for data_key, data_value in data.iteritems():
+        if (data_key[0] == 'extras'
+            and 'key' in data_value
+            and data_value['key'] == key[-1]):
+            data[key] = data_value['value']
+            break
+    else:
+        return
+    remove_from_extras(data, data_key[1])

@@ -23,7 +23,7 @@ To install ckanext-satreasury:
 
      pip install ckanext-satreasury
 
-3. Add ``satreasury`` to the ``ckan.plugins`` setting in your CKAN
+3. Add ``satreasury-dataset`` and ``satreasury-organization`` to the ``ckan.plugins`` setting in your CKAN
    config file (by default the config file is located at
    ``/etc/ckan/default/production.ini``).
 
