@@ -9,6 +9,19 @@ import logging
 
 log = logging.getLogger(__name__)
 
+FUNCTIONS = [
+     'Agriculture rural development and land reform',
+     'Basic education',
+     'Debt-service costs',
+     'Defence public order and safety',
+     'Economic affairs',
+     'General public services',
+     'Health',
+     'Human settlements and municipal infrastructure',
+     'Post school education and training',
+     'Social protection',
+]
+
 PROVINCES = [
     'Eastern Cape',
     'Free State',
@@ -44,6 +57,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         facets_dict['vocab_financial_years'] = 'Financial Year'
         facets_dict['vocab_spheres'] = 'Sphere of Government'
         facets_dict['vocab_provinces'] = 'Province'
+        facets_dict['vocab_functions'] = 'Government Functions'
         # move to the end
         facets_dict['organization'] = facets_dict.pop('organization')
         facets_dict['license_id'] = facets_dict.pop('license_id')
@@ -80,6 +94,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             ],
             'sphere': [
                 tk.get_converter('convert_from_tags')('spheres'),
+                tk.get_validator('ignore_missing')
+            ],
+            'functions': [
+                tk.get_converter('convert_from_tags')('functions'),
                 tk.get_validator('ignore_missing')
             ],
             'methodology': [
@@ -123,6 +141,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('spheres')
             ],
+            'functions': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_tags')('functions')
+            ],
             'methodology': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
@@ -132,10 +154,12 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     # ITemplateHelpers
     def get_helpers(self):
+
         return {
             'financial_years': load_financial_years,
             'provinces': load_provinces,
             'spheres': load_spheres,
+            'functions': load_functions,
             'active_financial_years': helpers.active_financial_years,
             'latest_financial_year': helpers.latest_financial_year,
             'packages_for_latest_financial_year': helpers.packages_for_latest_financial_year,
@@ -175,6 +199,34 @@ def required_financial_years():
     return ['%s-%s' % (y, y + 1 - 2000)
             for y in xrange(2007, datetime.date.today().year + 2)
             ]
+
+
+def create_functions():
+    """ Ensure all necessary function tags exist.
+    """
+    user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
+    context = {'user': user['name']}
+    try:
+        vocab = tk.get_action('vocabulary_show')(context, {'id': 'functions'})
+    except tk.ObjectNotFound:
+        vocab = tk.get_action('vocabulary_create')(context, {'name': 'functions'})
+
+    tag_create = tk.get_action('tag_create')
+    existing = set(t['name'] for t in vocab['tags'])
+    for function in set(FUNCTIONS) - existing:
+        tag_create(context, {
+            'name': function,
+            'vocabulary_id': vocab['id'],
+        })
+
+
+def load_functions():
+    create_functions()
+    try:
+        tag_list = tk.get_action('tag_list')
+        return tag_list(data_dict={'vocabulary_id': 'functions'})
+    except tk.ObjectNotFound:
+        return None
 
 
 def create_provinces():

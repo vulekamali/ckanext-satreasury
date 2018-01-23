@@ -21,6 +21,12 @@
         <dd><nobr>{% link_for sphere, controller='package', action='search', vocab_spheres=sphere %}</nobr></dd>
         {% endfor %}
       {% endif %}
+      {% if pkg.functions %}
+        <dt>{{ _('Functions') }}</dt>
+        {% for functions in pkg.functions %}
+        <dd>{% link_for functions, controller='package', action='search', vocab_functions=functions %}</dd>
+        {% endfor %}
+      {% endif %}
       <dt>{{ _('Followers') }}</dt>
       <dd>{{ h.SI_number_span(h.follow_count('dataset', pkg.id)) }}</dd>
     </dl>
