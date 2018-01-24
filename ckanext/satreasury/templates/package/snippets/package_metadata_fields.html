@@ -5,7 +5,7 @@
   <div class="control-group">
     <label class="control-label" for="field-financial_year">{{ _("Financial Year") }}</label>
     <div class="controls">
-      <select id="field-financial_year" name="financial_year" data-module="autocomplete">
+      <select id="field-financial_year" name="financial_year" data-module="autocomplete" multiple>
         <option value="">(none)</option>
         {% set years = h.financial_years()|reverse %}
         {% for year in years %}
@@ -18,7 +18,7 @@
   <div class="control-group">
     <label class="control-label" for="field-province">{{ _("Province") }}</label>
     <div class="controls">
-      <select id="field-province" name="province" data-module="autocomplete">
+      <select id="field-province" name="province" data-module="autocomplete" multiple>
         <option value="">(none)</option>
         {% for province in h.provinces() %}
           <option value="{{ province }}" {% if province in data.get('province', []) %}selected="selected"{% endif %}>{{ province }}</option>
@@ -30,10 +30,22 @@
   <div class="control-group">
     <label class="control-label" for="field-sphere">{{ _("Sphere") }}</label>
     <div class="controls">
-      <select id="field-sphere" name="sphere" data-module="autocomplete">
+      <select id="field-sphere" name="sphere" data-module="autocomplete" multiple>
         <option value="">(none)</option>
         {% for sphere in h.spheres() %}
           <option value="{{ sphere }}" {% if sphere in data.get('sphere', []) %}selected="selected"{% endif %}>{{ sphere }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="field-functions">{{ _("Functions") }}</label>
+    <div class="controls">
+      <select id="field-functions" name="functions" data-module="autocomplete" multiple>
+        <option value="">(none)</option>
+        {% for functions in h.functions() %}
+          <option value="{{ functions }}" {% if functions in data.get('functions', []) %}selected="selected"{% endif %}>{{ functions }}</option>
         {% endfor %}
       </select>
     </div>

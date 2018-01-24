@@ -4,21 +4,33 @@
   {% if pkg_dict.financial_year %}
     <tr>
       <th scope="row" class="dataset-label">{{ _('Financial Year') }}</th>
-      <td class="dataset-details">{{ pkg_dict.financial_year[0] }}</td>
+      <td class="dataset-details">
+        {% for financial_year in pkg_dict.financial_year %}
+        <p>{{ financial_year }}</p>
+        {% endfor %}
+      </td>
     </tr>
   {% endif %}
 
   {% if pkg_dict.province %}
     <tr>
       <th scope="row" class="dataset-label">{{ _('Province') }}</th>
-      <td class="dataset-details">{{ pkg_dict.province[0] }}</td>
+      <td class="dataset-details">
+        {% for province in pkg_dict.province %}
+        <p>{{ province }}</p>
+        {% endfor %}
+      </td>
     </tr>
   {% endif %}
 
   {% if pkg_dict.sphere %}
     <tr>
       <th scope="row" class="dataset-label">{{ _('Sphere') }}</th>
-      <td class="dataset-details">{{ pkg_dict.sphere[0] }}</td>
+      <td class="dataset-details">
+        {% for sphere in pkg_dict.sphere %}
+        <p>{{ sphere }}</p>
+        {% endfor %}
+      </td>
     </tr>
   {% endif %}
 

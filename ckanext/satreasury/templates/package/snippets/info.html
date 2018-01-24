@@ -5,15 +5,27 @@
     <dl>
       {% if pkg.financial_year %}
         <dt>{{ _('Financial Year') }}</dt>
-        <dd><nobr>{% link_for pkg.financial_year[0], controller='package', action='search', vocab_financial_years=pkg.financial_year[0] %}</nobr></dd>
+        {% for financial_year in pkg.financial_year %}
+        <dd><nobr>{% link_for financial_year, controller='package', action='search', vocab_financial_years=financial_year %}</nobr></dd>
+        {% endfor %}
       {% endif %}
       {% if pkg.province %}
         <dt>{{ _('Province') }}</dt>
-        <dd><nobr>{% link_for pkg.province[0], controller='package', action='search', vocab_provinces=pkg.province[0] %}</nobr></dd>
+        {% for province in pkg.province %}
+        <dd><nobr>{% link_for province, controller='package', action='search', vocab_provinces=province %}</nobr></dd>
+        {% endfor %}
       {% endif %}
       {% if pkg.sphere %}
         <dt>{{ _('Sphere') }}</dt>
-        <dd><nobr>{% link_for pkg.sphere[0], controller='package', action='search', vocab_spheres=pkg.sphere[0] %}</nobr></dd>
+        {% for sphere in pkg.sphere %}
+        <dd><nobr>{% link_for sphere, controller='package', action='search', vocab_spheres=sphere %}</nobr></dd>
+        {% endfor %}
+      {% endif %}
+      {% if pkg.functions %}
+        <dt>{{ _('Functions') }}</dt>
+        {% for functions in pkg.functions %}
+        <dd>{% link_for functions, controller='package', action='search', vocab_functions=functions %}</dd>
+        {% endfor %}
       {% endif %}
       <dt>{{ _('Followers') }}</dt>
       <dd>{{ h.SI_number_span(h.follow_count('dataset', pkg.id)) }}</dd>
