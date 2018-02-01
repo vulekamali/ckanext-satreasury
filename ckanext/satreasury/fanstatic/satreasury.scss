@@ -1,34 +1,98 @@
-.satreasury-masthead {
-  background-color: white;
-  padding: 5px 0px;
-
-  img.treasury-logo {
-    height: 70px;
-    width: auto;
-  }
-   
-  img.sa-flag {
-    width: 40px;
-    height: auto;
-    margin-top: 20px;
-  }
-}
-
-.site-footer {
-  a {
-    color: white;
-  }
-
-  .openup-logo {
-    height: 60px;
-    width: auto;
-    padding: 5px;
-    background-color: white;
-    border-radius: 5px;
-  }
-}
+$green: #79b43c;
 
 /* ckan overrides */
+body {
+  background: white;
+}
+
+a {
+  color: $green;
+}
+
+a:hover,
+a:focus {
+  color: darken($green, 20%);
+}
+
+.account-masthead {
+  color: #333;
+  background: white;
+}
+
+.account-masthead .account ul li {
+  border: 0px;
+
+  a {
+    color: #333;
+
+    &:hover {
+      color: #333;
+      background-color: #ccc;
+    }
+  }
+}
+
+.account-masthead .account .notifications a span.badge {
+  background-color: $green;
+  color: white;
+}
+
+.masthead {
+  background: white;
+  color: #333;
+  border-bottom: 5px solid #3f3f3f;
+
+  a {
+    color: #333;
+  }
+
+  input[type="text"] {
+    border-color: $green;
+  }
+}
+
+.masthead .nav > li > a,
+.masthead .nav > li > a:focus,
+.masthead .nav > li > a:hover,
+.masthead .nav > .active > a,
+.masthead .nav > .active > a:hover,
+.masthead .nav > .active > a:focus {
+  color: #333;
+}
+
+.masthead .navigation .nav-pills li a:hover,
+.masthead .navigation .nav-pills li.active a {
+  background-color: #3f3f3f;
+  color: white;
+}
+
+.masthead .debug {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+
+.site-footer {
+  background: white;
+  border-top: 5px solid #3f3f3f;
+
+  a {
+    color: #79b43c;
+  }
+}
+
+.site-footer,
+.site-footer label,
+.site-footer small {
+  color: #333;
+}
+
+.attribution .ckan-footer-logo {
+  background-color: #333;
+}
+
+.homepage .module-search .module-content {
+  background-color: #3f3f3f;
+}
 
 // hero on homepage
 [role=main] {
