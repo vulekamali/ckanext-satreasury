@@ -1,24 +1,72 @@
-.satreasury-masthead {
-  background-color: white;
-  padding: 5px 0px; }
-  .satreasury-masthead img.treasury-logo {
-    height: 70px;
-    width: auto; }
-  .satreasury-masthead img.sa-flag {
-    width: 40px;
-    height: auto;
-    margin-top: 20px; }
-
-.site-footer a {
-  color: white; }
-.site-footer .openup-logo {
-  height: 60px;
-  width: auto;
-  padding: 5px;
-  background-color: white;
-  border-radius: 5px; }
-
 /* ckan overrides */
+body {
+  background: white; }
+
+a {
+  color: #79b43c; }
+
+a:hover,
+a:focus {
+  color: #466823; }
+
+.account-masthead {
+  color: #333;
+  background: white; }
+
+.account-masthead .account ul li {
+  border: 0px; }
+  .account-masthead .account ul li a {
+    color: #333; }
+    .account-masthead .account ul li a:hover {
+      color: #333;
+      background-color: #ccc; }
+
+.account-masthead .account .notifications a span.badge {
+  background-color: #79b43c;
+  color: white; }
+
+.masthead {
+  background: white;
+  color: #333;
+  border-bottom: 5px solid #3f3f3f; }
+  .masthead a {
+    color: #333; }
+  .masthead input[type="text"] {
+    border-color: #79b43c; }
+
+.masthead .nav > li > a,
+.masthead .nav > li > a:focus,
+.masthead .nav > li > a:hover,
+.masthead .nav > .active > a,
+.masthead .nav > .active > a:hover,
+.masthead .nav > .active > a:focus {
+  color: #333; }
+
+.masthead .navigation .nav-pills li a:hover,
+.masthead .navigation .nav-pills li.active a {
+  background-color: #3f3f3f;
+  color: white; }
+
+.masthead .debug {
+  color: rgba(0, 0, 0, 0.5); }
+
+.site-footer {
+  background: white;
+  border-top: 5px solid #3f3f3f; }
+  .site-footer a {
+    color: #79b43c; }
+
+.site-footer,
+.site-footer label,
+.site-footer small {
+  color: #333; }
+
+.attribution .ckan-footer-logo {
+  background-color: #333; }
+
+.homepage .module-search .module-content {
+  background-color: #3f3f3f; }
+
 [role=main] {
   min-height: 250px; }
 
