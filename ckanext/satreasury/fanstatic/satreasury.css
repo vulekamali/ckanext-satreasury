@@ -55,6 +55,10 @@ a:focus {
   border-top: 5px solid #3f3f3f; }
   .site-footer a {
     color: #79b43c; }
+  .site-footer .logos img {
+    width: 200px;
+    height: auto;
+    margin-bottom: 10px; }
 
 .site-footer,
 .site-footer label,
@@ -66,6 +70,13 @@ a:focus {
 
 .homepage .module-search .module-content {
   background-color: #3f3f3f; }
+
+.context-info .nums dl dt {
+  margin-top: 10px; }
+  .context-info .nums dl dt:first-child {
+    margin-top: 0px; }
+.context-info .nums dl dd {
+  font-size: 26px; }
 
 [role=main] {
   min-height: 250px; }

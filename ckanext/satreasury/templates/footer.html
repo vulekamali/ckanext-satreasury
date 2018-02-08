@@ -3,15 +3,24 @@
 {% block footer_links %}
   <li>This datastore powers the <a href="https://vulekamali.gov.za">vulekamali.gov.za</a> website.</li>
   <li>&nbsp;</li>
+  <li><a href="https://vulekamali.gov.za/">vulekamali Budget Portal</a></li>
   <li><a href="https://vulekamali.gov.za/2017-18/about">About vulekamali</a></li>
-  <li><a href="http://www.treasury.gov.za">National Treasury</a></li>
 {% endblock %}
-
 
 {% block footer_links_ckan %}
   {% set api_url = 'http://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version) %}
   <li>&nbsp;</li>
-  <li><a href="{{ api_url }}">{{ _('CKAN API') }}</a></li>
+  <li><a href="{{ api_url }}">{{ _('CKAN API Documentation') }}</a></li>
+{% endblock %}
+
+{% block footer_attribution %}
+  <div class="logos">
+    <a href="http://www.treasury.gov.za/"><img src="/treasury-logo.jpg" width="200"></a>
+    <a href="https://imaliyethu.org.za/"><img src="/imali-yethu-logo.png" width="200"></a>
+  </div>
+
+  {{ super() }}
+
 {% endblock %}
 
 
