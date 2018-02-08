@@ -64,6 +64,27 @@
 
         <div class="box">
           <header class="module-heading">
+            <h3>Browse National and Provincial datasets</h3>
+          </header>
+          <div class="module-content">
+            <ul class="unstyled">
+              <li>{% link_for 'Estimates of National Revenue', controller='package', action='search', vocab_spheres='national', q='estimates of national revenue' %}</li>
+              <li>{% link_for 'Estimates of National Expenditure (ENE)', controller='package', action='search', vocab_spheres='national', q='estimates of national expenditure' %}</li>
+              <li>{% link_for 'Structured National datasets that use the OpenSpending API', controller='package', action='search', vocab_spheres='national', res_format='OpenSpending API' %}</li>
+              <li>{% link_for 'All National datasets', controller='package', action='search', vocab_spheres='national' %}</li>
+              <li>&nbsp;</li>
+
+              <li>{% link_for 'Estimates of Provincial Expenditure (EPRE)', controller='package', action='search', vocab_spheres='provincial', q='estimates of provincial expenditure' %}</li>
+              <li>{% link_for 'Structured Provincial datasets that use the OpenSpending API', controller='package', action='search', vocab_spheres='provincial', res_format='OpenSpending API' %}</li>
+              <li>{% link_for 'All Provincial datasets', controller='package', action='search', vocab_spheres='provincial' %}</li>
+            </ul>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="box">
+          <header class="module-heading">
             <h3>Browse datasets by Province</h3>
           </header>
           <div class="module-content">
