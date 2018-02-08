@@ -102,6 +102,22 @@ a:focus {
   background-color: #3f3f3f;
 }
 
+// dataset page lefthand bar
+.context-info .nums dl {
+  dt {
+    margin-top: 10px;
+
+    &:first-child {
+      margin-top: 0px;
+    }
+  }
+
+  dd {
+    font-size: 26px;
+  }
+}
+
+
 // hero on homepage
 [role=main] {
   min-height: 250px;

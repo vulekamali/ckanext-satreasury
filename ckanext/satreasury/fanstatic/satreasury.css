@@ -71,6 +71,13 @@ a:focus {
 .homepage .module-search .module-content {
   background-color: #3f3f3f; }
 
+.context-info .nums dl dt {
+  margin-top: 10px; }
+  .context-info .nums dl dt:first-child {
+    margin-top: 0px; }
+.context-info .nums dl dd {
+  font-size: 26px; }
+
 [role=main] {
   min-height: 250px; }
 
