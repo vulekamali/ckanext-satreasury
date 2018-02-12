@@ -14,13 +14,16 @@
 {% endblock %}
 
 {% block footer_attribution %}
-  <div class="logos">
-    <a href="http://www.treasury.gov.za/"><img src="/treasury-logo.jpg" width="200"></a>
-    <a href="https://imaliyethu.org.za/"><img src="/imali-yethu-logo.png" width="200"></a>
-  </div>
+  <a href="https://vulekamali.gov.za/"><img src="/vm-logo.png" height="75" class="vm-logo"></a>
+{% endblock %}
 
+{% block footer_content %}
   {{ super() }}
 
+  <div class="logos">
+    <a href="http://www.treasury.gov.za/"><img src="/treasury-logo.jpg" height="75"></a>
+    <a href="https://imaliyethu.org.za/"><img src="/imali-yethu-logo.png" height="75"></a>
+  </div>
 {% endblock %}
 
 
