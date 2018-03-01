@@ -23,15 +23,61 @@
 
         <div class="box">
           <header class="module-heading">
-            <h3>About the vulekamali datastore</h3>
+            <h3>About the vulekamali datastore and API</h3>
           </header>
           <div class="module-content">
             <p>This is a CKAN data portal that hosts the data on the <a href="https://vulekamali.gov.za">vulekamali Budget Data Portal</a>.</p>
+
+            <p>Use the <b>vulekamali CKAN API</b> to access the data in the datastore:</p>
+            <p>
+            <ul>
+              <li><b>Structured Estimates of National Expenditure</b> that you can explore with the OpenSpending API.</li>
+              <li><b>PDF documents and Excel spreadsheets</b> that users can download and work with offline.</li>
+            </ul>
+            <p><a href="/about" class="btn btn-primary">vulekamali API Docs</a></p>
+          </div>
+        </div>
+
+      </div>
+      <div class="span6 col1">
+
+        <div class="box">
+          <header class="module-heading">
+            <h3>Structured Datasets</h3>
+          </header>
+          <div class="module-content">
+            <p><i>These datesets are available to download as Excel pivot tables and to query directly using the OpenSpending API.</i></p>
+
+            <h2>Estimates of National Expenditure</h2>
+
+            <p>Use the Estimates of National Expenditure (ENE) pivot tables and API to help users understand budget allocation to national departments.</p>
+
+            <ul>
+              <li><a href="/dataset/estimates-of-national-expenditure-2018-19">ENE for 2018-19</a></li>
+              <li><a href="/dataset/estimates-of-national-expenditure-2017-18">ENE for 2017-18</a></li>
+              <li><a href="/dataset/estimates-of-national-expenditure-2016-17">ENE for 2016-17</a></li>
+            </ul>
+
+            <h2>Estimates of Provincial Expenditure</h2>
+
+            <p>Use the Estimates of Provincial Revenue and Expenditure (EPRE) pivot tables and API to help users understand budget allocation to provincial departments.</p>
+
+            <ul>
+              <li><a href="/dataset/estimates-of-provincial-expenditure-2017-18">ENE for 2017-18</a></li>
+              <li><a href="/dataset/estimates-of-provincial-expenditure-2016-17">ENE for 2016-17</a></li>
+              <li><a href="/dataset/estimates-of-provincial-expenditure-2015-16">ENE for 2015-16</a></li>
+            </ul>
+
           </div>
         </div>
 
         <br>
 
+      </div>
+    </div>
+
+    <div class="row row2">
+      <div class="span6 col2">
         <div class="box">
           <header class="module-heading">
             <h3>What is vulekamali?</h3>
@@ -42,10 +88,9 @@
             <iframe width="100%" height="230" src="https://www.youtube.com/embed/zFalZt862hk?showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
         </div>
-
       </div>
-      <div class="span6 col1">
 
+      <div class="span6 col1">
         <div class="box">
           <header class="module-heading">
             <h3>Browse datasets by Financial Year</h3>
@@ -56,27 +101,6 @@
               {% for year in years %}
               <li>{% link_for year, controller='package', action='search', vocab_financial_years=year %}</li>
               {% endfor %}
-            </ul>
-          </div>
-        </div>
-
-        <br>
-
-        <div class="box">
-          <header class="module-heading">
-            <h3>Browse National and Provincial datasets</h3>
-          </header>
-          <div class="module-content">
-            <ul class="unstyled">
-              <li>{% link_for 'Estimates of National Revenue', controller='package', action='search', vocab_spheres='national', q='estimates of national revenue' %}</li>
-              <li>{% link_for 'Estimates of National Expenditure (ENE)', controller='package', action='search', vocab_spheres='national', q='estimates of national expenditure' %}</li>
-              <li>{% link_for 'Structured National datasets that use the OpenSpending API', controller='package', action='search', vocab_spheres='national', res_format='OpenSpending API' %}</li>
-              <li>{% link_for 'All National datasets', controller='package', action='search', vocab_spheres='national' %}</li>
-              <li>&nbsp;</li>
-
-              <li>{% link_for 'Estimates of Provincial Expenditure (EPRE)', controller='package', action='search', vocab_spheres='provincial', q='estimates of provincial expenditure' %}</li>
-              <li>{% link_for 'Structured Provincial datasets that use the OpenSpending API', controller='package', action='search', vocab_spheres='provincial', res_format='OpenSpending API' %}</li>
-              <li>{% link_for 'All Provincial datasets', controller='package', action='search', vocab_spheres='provincial' %}</li>
             </ul>
           </div>
         </div>
