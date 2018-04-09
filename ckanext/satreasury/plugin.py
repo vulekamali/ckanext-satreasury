@@ -353,3 +353,30 @@ def convert_from_group_extras(key, data, errors, context):
     else:
         return
     remove_from_extras(data, data_key[1])
+
+
+class SATreasurySecurityPlugin(plugins.SingletonPlugin):
+
+    plugins.implements(plugins.IAuthFunctions)
+
+    def get_auth_functions(self):
+        log.debug("################### SATreasurySecurityPlugin.get_auth_functions ###")
+        return {
+            'user_list': auth_user_list,
+            'user_show': auth_user_show,
+        }
+
+
+def auth_user_list(context, data_dict=None):
+    log.debug("####### auth_user_list ###")
+    return {
+        'success': False,
+        'msg': "Access denied."
+    }
+
+
+def auth_user_show(context, data_dict=None):
+    return {
+        'success': False,
+        'msg': "Access denied."
+    }
