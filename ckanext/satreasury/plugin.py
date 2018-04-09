@@ -366,7 +366,6 @@ class SATreasurySecurityPlugin(plugins.SingletonPlugin):
 
 
 def auth_user_list(context, data_dict=None):
-    log.debug("####### auth_user_list ###")
     return {
         'success': False,
         'msg': "Access denied."
