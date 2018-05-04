@@ -127,7 +127,7 @@ class PackageSearchQuery(search.PackageSearchQuery):
         query['facet.mincount'] = query.get('facet.mincount', 1)
 
         # return the package ID and search scores
-        query['fl'] = query.get('fl', 'name')
+        query['fl'] = query.get('fl', 'name') + ' index_id'
 
         # return results as json encoded string
         query['wt'] = query.get('wt', 'json')
@@ -176,7 +176,7 @@ class PackageSearchQuery(search.PackageSearchQuery):
                 result['extras'] = extras
 
         # if just fetching the id or name, return a list instead of a dict
-        if query.get('fl') in ['id', 'name']:
+        if query.get('fl').replace(' index_id', '') in ['id', 'name']:
             self.results = [r.get(query.get('fl')) for r in self.results]
 
         # get facets and convert facets list to a dict
@@ -288,20 +288,18 @@ def package_search(context, data_dict):
                 else:
                     log.error('No package_dict is coming from solr for package '
                               'id %s', package['id'])
+        assign_highlighting(results, query.results, query.highlighting)
 
         count = query.count
         facets = query.facets
-        highlighting = query.highlighting
     else:
         count = 0
         facets = {}
         results = []
-        highlighting = {}
 
     search_results = {
         'count': count,
         'facets': facets,
-        'highlighting': highlighting,
         'results': results,
         'sort': data_dict['sort'],
     }
@@ -358,6 +356,16 @@ def package_search(context, data_dict):
     return search_results
 
 
+def assign_highlighting(result_packages, solr_results, highlighting):
+    for idx, solr_result in enumerate(solr_results):
+        if isinstance(solr_result, dict):
+            index_id = solr_result['index_id']
+            package_highlighting = highlighting[index_id]
+            result_packages[idx]['highlighting'] = package_highlighting
+        else:
+            log.debug("Not a dict %r", solr_result)
+
+
 class SATreasurySearchPlugin(plugins.SingletonPlugin):
 
     plugins.implements(plugins.IPackageController, inherit=True)
@@ -377,9 +385,7 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
         return search_params
 
     def after_search(self, search_results, search_params):
-        log.info("%r", search_params)
         extras = search_params.get('extras')
         if extras and 'ext_highlight' in extras:
-            log.info("%r", search_results)
-
+            pass
         return search_results
