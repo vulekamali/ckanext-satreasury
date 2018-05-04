@@ -83,6 +83,7 @@ setup(
         satreasury-dataset=ckanext.satreasury.plugin:SATreasuryDatasetPlugin
         satreasury-organization=ckanext.satreasury.plugin:SATreasuryOrganizationPlugin
         satreasury-security=ckanext.satreasury.plugin:SATreasurySecurityPlugin
+        satreasury-search=ckanext.satreasury.search_plugin:SATreasurySearchPlugin
 
         [babel.extractors]
         ckan = ckan.lib.extract:extract_ckan
