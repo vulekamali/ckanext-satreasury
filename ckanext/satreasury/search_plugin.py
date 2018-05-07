@@ -39,9 +39,12 @@ import socket
 import sqlalchemy
 import uuid
 
+import re
+
+HIGHLIGHTING_PARAMETERS = ['hl', 'hl.fl', 'hl.snippets', 'hl.fragsize', 'pf']
 VALID_SOLR_PARAMETERS = search.query.VALID_SOLR_PARAMETERS.copy()
-VALID_SOLR_PARAMETERS.add('hl.fl')
-VALID_SOLR_PARAMETERS.add('hl')
+for param in HIGHLIGHTING_PARAMETERS:
+    VALID_SOLR_PARAMETERS.add(param)
 
 _validate = ckan.lib.navl.dictization_functions.validate
 _table_dictize = ckan.lib.dictization.table_dictize
@@ -381,11 +384,8 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
         if extras and 'ext_highlight' in extras:
             search_params['hl'] = 'on'
             search_params['hl.fl'] = '*'
+            search_params['hl.snippets'] = 5
+            search_params['hl.fragsize'] = 200
+            search_params['pf'] = ['name^4 title^4 tags^2 groups^2 text']
 
         return search_params
-
-    def after_search(self, search_results, search_params):
-        extras = search_params.get('extras')
-        if extras and 'ext_highlight' in extras:
-            pass
-        return search_results
