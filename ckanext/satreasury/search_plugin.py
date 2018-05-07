@@ -43,8 +43,6 @@ import re
 
 HIGHLIGHTING_PARAMETERS = ['hl', 'hl.fl', 'hl.snippets', 'hl.fragsize', 'pf']
 VALID_SOLR_PARAMETERS = search.query.VALID_SOLR_PARAMETERS.copy()
-for param in HIGHLIGHTING_PARAMETERS:
-    VALID_SOLR_PARAMETERS.add(param)
 
 _validate = ckan.lib.navl.dictization_functions.validate
 _table_dictize = ckan.lib.dictization.table_dictize
@@ -87,8 +85,13 @@ class PackageSearchQuery(search.PackageSearchQuery):
         '''
         assert isinstance(query, (dict, MultiDict))
         # check that query keys are valid
-        if not set(query.keys()) <= VALID_SOLR_PARAMETERS:
-            invalid_params = [s for s in set(query.keys()) - VALID_SOLR_PARAMETERS]
+        valid_solr_parameters = VALID_SOLR_PARAMETERS
+        for item in plugins.PluginImplementations(plugins.IPackageController):
+            if 'update_valid_solr_parameters' in dir(item):
+                valid_solr_parameters = item.update_valid_solr_parameters(valid_solr_parameters)
+
+        if not set(query.keys()) <= valid_solr_parameters:
+            invalid_params = [s for s in set(query.keys()) - valid_solr_parameters]
             raise SearchQueryError("Invalid search parameters: %s" % invalid_params)
 
         # default query is to return all documents
@@ -130,7 +133,7 @@ class PackageSearchQuery(search.PackageSearchQuery):
         query['facet.mincount'] = query.get('facet.mincount', 1)
 
         # return the package ID and search scores
-        query['fl'] = query.get('fl', 'name') + ' index_id'
+        query['fl'] = query.get('fl', 'name')
 
         # return results as json encoded string
         query['wt'] = query.get('wt', 'json')
@@ -179,7 +182,7 @@ class PackageSearchQuery(search.PackageSearchQuery):
                 result['extras'] = extras
 
         # if just fetching the id or name, return a list instead of a dict
-        if query.get('fl').replace(' index_id', '') in ['id', 'name']:
+        if query.get('fl') in ['id', 'name']:
             self.results = [r.get(query.get('fl')) for r in self.results]
 
         # get facets and convert facets list to a dict
@@ -187,7 +190,10 @@ class PackageSearchQuery(search.PackageSearchQuery):
         for field, values in six.iteritems(self.facets):
             self.facets[field] = dict(zip(values[0::2], values[1::2]))
 
-        query_response = {'results': self.results, 'count': self.count, 'highlighting': self.highlighting}
+        query_response = {
+            'results': self.results,
+            'count': self.count,
+        }
 
         return query_response
 
@@ -291,14 +297,20 @@ def package_search(context, data_dict):
                 else:
                     log.error('No package_dict is coming from solr for package '
                               'id %s', package['id'])
-        assign_highlighting(results, query.results, query.highlighting)
 
         count = query.count
         facets = query.facets
+        raw_solr_results = {
+            'results': query.results,
+            'highlighting': query.highlighting,
+            'count': query.count,
+            'facets': query.facets,
+        }
     else:
         count = 0
         facets = {}
         results = []
+        raw_solr_results = {}
 
     search_results = {
         'count': count,
@@ -306,6 +318,15 @@ def package_search(context, data_dict):
         'results': results,
         'sort': data_dict['sort'],
     }
+
+    include_raw_solr_results = False
+    for item in plugins.PluginImplementations(plugins.IPackageController):
+        if 'include_raw_solr_results' in dir(item):
+            include_raw_solr_results = include_raw_solr_results \
+                                       or item.include_raw_solr_results(data_dict)
+
+    if include_raw_solr_results:
+        search_results['raw_solr_results'] = raw_solr_results
 
     # create a lookup table of group name to title for all the groups and
     # organizations in the current search's facets.
@@ -359,16 +380,6 @@ def package_search(context, data_dict):
     return search_results
 
 
-def assign_highlighting(result_packages, solr_results, highlighting):
-    for idx, solr_result in enumerate(solr_results):
-        if isinstance(solr_result, dict):
-            index_id = solr_result['index_id']
-            package_highlighting = highlighting[index_id]
-            result_packages[idx]['highlighting'] = package_highlighting
-        else:
-            log.debug("Not a dict %r", solr_result)
-
-
 class SATreasurySearchPlugin(plugins.SingletonPlugin):
 
     plugins.implements(plugins.IPackageController, inherit=True)
@@ -380,12 +391,59 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
         }
 
     def before_search(self, search_params):
+        log.info("before_search %r", search_params)
         extras = search_params.get('extras')
         if extras and 'ext_highlight' in extras:
             search_params['hl'] = 'on'
             search_params['hl.fl'] = '*'
             search_params['hl.snippets'] = 5
             search_params['hl.fragsize'] = 200
+            # Make sure that matches where the query words are in close
+            # proximity get higher ranking
             search_params['pf'] = ['name^4 title^4 tags^2 groups^2 text']
+            # Request what package_search requests by default + index_id
+            field_list = ['id', 'validated_data_dict', 'index_id']
+            search_params['fl'] = search_params.get('fl', field_list)
 
         return search_params
+
+    def update_valid_solr_parameters(self, valid_solr_parameters):
+        """
+        Takes a set and returns a set
+        """
+        for param in HIGHLIGHTING_PARAMETERS:
+            valid_solr_parameters.add(param)
+        return valid_solr_parameters
+
+    def include_raw_solr_results(self, search_params):
+        extras = search_params.get('extras')
+        if extras and 'ext_highlight' in extras:
+            return True
+        else:
+            return False
+
+    def after_search(self, search_results, search_params):
+        log.info("after_search %r %r", search_results, search_params)
+        extras = search_params.get('extras')
+        if extras and 'ext_highlight' in extras:
+            ckan_results = search_results['results']
+            solr_results = search_results['raw_solr_results']['results']
+            highlighting = search_results['raw_solr_results']['highlighting']
+            assign_highlighting(ckan_results, solr_results, highlighting)
+
+            # Clean up the stuff we needed for assigning highlighting
+            del search_results['raw_solr_results']
+            for package in search_results['results']:
+                del package['index_id']
+
+        return search_results
+
+
+def assign_highlighting(result_packages, solr_results, highlighting):
+    for idx, solr_result in enumerate(solr_results):
+        if isinstance(solr_result, dict):
+            index_id = solr_result['index_id']
+            package_highlighting = highlighting[index_id]
+            result_packages[idx]['highlighting'] = package_highlighting
+        else:
+            log.debug("Not a dict %r", solr_result)
