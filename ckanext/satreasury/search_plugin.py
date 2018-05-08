@@ -395,8 +395,7 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
 
     def before_search(self, search_params):
         # log.info("before_search %r", search_params)
-        extras = search_params.get('extras')
-        if extras and 'ext_highlight' in extras:
+        if asbool(search_params.get('extras').get('ext_highlight')):
             search_params['hl'] = 'on'
             search_params['hl.fl'] = '*'
             search_params['hl.snippets'] = 5
@@ -422,16 +421,14 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
         return valid_solr_parameters
 
     def include_raw_solr_results(self, search_params):
-        extras = search_params.get('extras')
-        if extras and 'ext_highlight' in extras:
+        if asbool(search_params.get('extras').get('ext_highlight')):
             return True
         else:
             return False
 
     def after_search(self, search_results, search_params):
         # log.info("after_search %r %r", search_results, search_params)
-        extras = search_params.get('extras')
-        if extras and 'ext_highlight' in extras:
+        if asbool(search_params.get('extras').get('ext_highlight')):
             ckan_results = search_results['results']
             solr_results = search_results['raw_solr_results']['results']
             highlighting = search_results['raw_solr_results']['highlighting']
