@@ -275,7 +275,7 @@ def package_search(context, data_dict):
         # Add them back so extensions can use them on after_search
         data_dict['extras'] = extras
 
-        if result_fl:
+        if result_fl and not extras['fl_compatible']:
             for package in query.results:
                 if package.get('extras'):
                     package.update(package['extras'] )
@@ -391,7 +391,7 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
         }
 
     def before_search(self, search_params):
-        log.info("before_search %r", search_params)
+        # log.info("before_search %r", search_params)
         extras = search_params.get('extras')
         if extras and 'ext_highlight' in extras:
             search_params['hl'] = 'on'
@@ -404,6 +404,9 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
             # Request what package_search requests by default + index_id
             field_list = ['id', 'validated_data_dict', 'index_id']
             search_params['fl'] = search_params.get('fl', field_list)
+            # Tell CKAN that the custom fl is compatible with its original
+            # and it should behave like it's not modified
+            search_params['extras']['fl_compatible'] = True
 
         return search_params
 
@@ -423,7 +426,7 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
             return False
 
     def after_search(self, search_results, search_params):
-        log.info("after_search %r %r", search_results, search_params)
+        # log.info("after_search %r %r", search_results, search_params)
         extras = search_params.get('extras')
         if extras and 'ext_highlight' in extras:
             ckan_results = search_results['results']
@@ -433,8 +436,6 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
 
             # Clean up the stuff we needed for assigning highlighting
             del search_results['raw_solr_results']
-            for package in search_results['results']:
-                del package['index_id']
 
         return search_results
 
