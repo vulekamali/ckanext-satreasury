@@ -41,7 +41,6 @@ import uuid
 
 import re
 
-HIGHLIGHTING_PARAMETERS = ['hl', 'hl.fl', 'hl.snippets', 'hl.fragsize', 'pf']
 VALID_SOLR_PARAMETERS = search.query.VALID_SOLR_PARAMETERS.copy()
 
 _validate = ckan.lib.navl.dictization_functions.validate
@@ -380,6 +379,9 @@ def package_search(context, data_dict):
     return search_results
 
 
+HIGHLIGHTING_PARAMETERS = ['hl', 'hl.fl', 'hl.snippets', 'hl.fragsize', 'pf']
+
+
 class SATreasurySearchPlugin(plugins.SingletonPlugin):
 
     plugins.implements(plugins.IPackageController, inherit=True)
@@ -440,11 +442,27 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
         return search_results
 
 
+RESOURCE_RE = re.compile('^ckanext-extractor_([a-z0-9_-]+)_fulltext$')
+
+
 def assign_highlighting(result_packages, solr_results, highlighting):
     for idx, solr_result in enumerate(solr_results):
-        if isinstance(solr_result, dict):
-            index_id = solr_result['index_id']
-            package_highlighting = highlighting[index_id]
-            result_packages[idx]['highlighting'] = package_highlighting
-        else:
-            log.debug("Not a dict %r", solr_result)
+
+        index_id = solr_result['index_id']
+        package_highlighting = highlighting[index_id]
+        package_result = result_packages[idx]
+        package_result['highlighting'] = package_highlighting
+
+        # Initialise resource highlighting key
+        for resource in package_result['resources']:
+            resource['highlighting'] = {}
+
+        # Move resource highlighting to the resource
+        for key in package_highlighting.keys():
+            match = RESOURCE_RE.match(key)
+            if match:
+                resource_id = match.group(1)
+                highlights = package_highlighting.pop(key)
+                for resource in package_result['resources']:
+                    if resource['id'] == resource_id:
+                        resource['highlighting']['fulltext'] = highlights
