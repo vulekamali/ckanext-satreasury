@@ -379,7 +379,8 @@ def package_search(context, data_dict):
     return search_results
 
 
-HIGHLIGHTING_PARAMETERS = ['hl', 'hl.fl', 'hl.snippets', 'hl.fragsize', 'pf']
+HIGHLIGHTING_PARAMETERS = ['hl', 'hl.fl', 'hl.snippets', 'hl.fragsize',
+                           'hl.simple.pre', 'hl.simple.post', 'pf']
 
 
 class SATreasurySearchPlugin(plugins.SingletonPlugin):
@@ -398,6 +399,8 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
         if asbool(search_params.get('extras').get('ext_highlight')):
             search_params['hl'] = 'on'
             search_params['hl.fl'] = '*'
+            search_params['hl.simple.pre'] = ''
+            search_params['hl.simple.post'] = ''
             search_params['hl.snippets'] = 5
             search_params['hl.fragsize'] = 200
             # Make sure that matches where the query words are in close
