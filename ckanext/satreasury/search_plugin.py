@@ -388,6 +388,7 @@ class SATreasurySearchPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IActions)
 
     def get_actions(self):
+        package_search.side_effect_free = True
         return {
             'package_search': package_search,
         }
