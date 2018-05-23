@@ -378,11 +378,17 @@ def auth_package_create(context, data_dict=None):
     # If they're just viewing the new creation form
     # or they're creating a private dataset, fall back to ckan auth
     log.info("package_create %r %r", context, data_dict)
-    if data_dict is None or data_dict.get('private') == 'True':
+    if data_dict is None \
+       or not data_dict \
+       or data_dict.get('private') == 'True':
         return ckan_auth.create.package_create(context, data_dict)
 
     # If they're not adding a dataset to an org but they're setting it public, reject
-    if data_dict.get('owner_org', None) and data_dict('private', 'False').lower() == 'true':
+    dataset_has_org = data_dict.get('owner_org', None)
+    dataset_is_public = data_dict.get('private', 'true').lower() == 'true'
+    if not dataset_has_org and dataset_is_public:
+        log.info("rejecting package_create: dataset_has_org=%r, dataset_is_public=%r",
+                 dataset_has_org, dataset_is_public)
         return {
             'success': False,
             'msg': 'Cannot create a public dataset without an organization'
