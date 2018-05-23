@@ -3,7 +3,7 @@ import datetime
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 import ckan.logic.schema as default_schemas
-
+import ckan.logic.auth as ckan_auth
 import ckanext.satreasury.helpers as helpers
 import logging
 
@@ -362,6 +362,8 @@ class SATreasurySecurityPlugin(plugins.SingletonPlugin):
     def get_auth_functions(self):
         return {
             'user_list': auth_user_list,
+            'package_create': auth_package_create,
+            'package_update': auth_package_update,
         }
 
 
@@ -370,3 +372,34 @@ def auth_user_list(context, data_dict=None):
         'success': False,
         'msg': "Access denied."
     }
+
+
+def auth_package_create(context, data_dict=None):
+    # If they're just viewing the new creation form
+    # or they're creating a private dataset, fall back to ckan auth
+    log.info("package_create %r %r", context, data_dict)
+    if data_dict is None or data_dict.get('private') == 'True':
+        return ckan_auth.create.package_create(context, data_dict)
+
+    # If they're not adding a dataset to an org but they're setting it public, reject
+    if data_dict.get('owner_org', None) and data_dict('private', 'False').lower() == 'true':
+        return {
+            'success': False,
+            'msg': 'Cannot create a public dataset without an organization'
+        }
+
+    # organizations_available = set(
+    #     o['id'] for o in helpers.organizations_available('create_dataset')
+    # )
+    # log.info("organizations_available %r", organizations_available)
+    # groups_selected = [g'id' for g in data_dict
+    # available_org_selected =
+    # set_private =  and data_dict.get('private') == 'True'
+    # if not set_private and :
+    return ckan_auth.create.package_create(context, data_dict)
+
+
+def auth_package_update(context, data_dict=None):
+    log.info("package_update %r %r", context, data_dict)
+    dataset_obj = context.get('package')
+    return ckan_auth.update.package_update(context, data_dict)
