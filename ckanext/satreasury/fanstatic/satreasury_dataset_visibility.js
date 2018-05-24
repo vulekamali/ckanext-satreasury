@@ -1,6 +1,7 @@
 /* Dataset visibility toggler
  * When no organization is selected in the org dropdown then set visibility to
- * public always and disable dropdown
+ * private and disable dropdown.
+ * Default to Public when an organization is selected.
  */
 this.ckan.module('satreasury_dataset_visibility', function ($, _) {
   return {
