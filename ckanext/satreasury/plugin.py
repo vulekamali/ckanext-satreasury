@@ -383,7 +383,7 @@ def auth_package_create(context, data_dict=None):
 
     skip_custom_auth = not data_dict
     if not skip_custom_auth:
-        dataset_has_org = tk.asbool(data_dict.get('owner_org', None))
+        dataset_has_org = data_dict.get('owner_org', None)
         dataset_is_public = not tk.asbool(data_dict.get('private', 'true'))
         if not dataset_has_org and dataset_is_public:
             log.info("rejecting package_create: dataset_has_org=%r, dataset_is_public=%r",
@@ -401,7 +401,7 @@ def auth_package_update(context, data_dict=None):
 
     skip_custom_auth = not data_dict
     if not skip_custom_auth:
-        dataset_has_org = tk.asbool(data_dict.get('owner_org', None))
+        dataset_has_org = data_dict.get('owner_org', None)
         dataset_is_public = not tk.asbool(data_dict.get('private', 'true'))
         if not dataset_has_org and dataset_is_public:
             log.info("rejecting package_update: dataset_has_org=%r, dataset_is_public=%r",
