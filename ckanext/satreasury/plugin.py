@@ -379,37 +379,36 @@ def auth_user_list(context, data_dict=None):
 
 
 def auth_package_create(context, data_dict=None):
-    # If they're just viewing the new creation form
-    # or they're creating a private dataset, fall back to ckan auth
     log.info("package_create %r %r", context, data_dict)
-    if data_dict is None \
-       or not data_dict \
-       or data_dict.get('private') == 'True':
-        return ckan_auth.create.package_create(context, data_dict)
 
-    # If they're not adding a dataset to an org but they're setting it public, reject
-    dataset_has_org = data_dict.get('owner_org', None)
-    dataset_is_public = data_dict.get('private', 'true').lower() == 'true'
-    if not dataset_has_org and dataset_is_public:
-        log.info("rejecting package_create: dataset_has_org=%r, dataset_is_public=%r",
-                 dataset_has_org, dataset_is_public)
-        return {
-            'success': False,
-            'msg': 'Cannot create a public dataset without an organization'
-        }
+    skip_custom_auth = not data_dict
+    if not skip_custom_auth:
+        dataset_has_org = tk.asbool(data_dict.get('owner_org', None))
+        dataset_is_public = not tk.asbool(data_dict.get('private', 'true'))
+        if not dataset_has_org and dataset_is_public:
+            log.info("rejecting package_create: dataset_has_org=%r, dataset_is_public=%r",
+                     dataset_has_org, dataset_is_public)
+            return {
+                'success': False,
+                'msg': 'Cannot make a dataset public without an organization'
+            }
 
-    # organizations_available = set(
-    #     o['id'] for o in helpers.organizations_available('create_dataset')
-    # )
-    # log.info("organizations_available %r", organizations_available)
-    # groups_selected = [g'id' for g in data_dict
-    # available_org_selected =
-    # set_private =  and data_dict.get('private') == 'True'
-    # if not set_private and :
     return ckan_auth.create.package_create(context, data_dict)
 
 
 def auth_package_update(context, data_dict=None):
     log.info("package_update %r %r", context, data_dict)
-    dataset_obj = context.get('package')
+
+    skip_custom_auth = not data_dict
+    if not skip_custom_auth:
+        dataset_has_org = tk.asbool(data_dict.get('owner_org', None))
+        dataset_is_public = not tk.asbool(data_dict.get('private', 'true'))
+        if not dataset_has_org and dataset_is_public:
+            log.info("rejecting package_update: dataset_has_org=%r, dataset_is_public=%r",
+                     dataset_has_org, dataset_is_public)
+            return {
+                'success': False,
+                'msg': 'Cannot make a dataset public without an organization'
+            }
+
     return ckan_auth.update.package_update(context, data_dict)
