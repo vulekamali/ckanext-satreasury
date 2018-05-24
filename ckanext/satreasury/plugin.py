@@ -1,3 +1,16 @@
+"""
+
+Core plugin for the South African Budget Portal vulekamali
+
+- Adds fields to datasets
+  - provinces
+  - financial year
+  - sphere (of government)
+  - methodology
+- Adds fields to organizations like contact details
+- Disables non-sysadmin access to /users which lists usernames
+- Disallows non-sysadmins from making datasets without an owner organization public.
+"""
 import datetime
 
 import ckan.plugins as plugins
@@ -379,8 +392,6 @@ def auth_user_list(context, data_dict=None):
 
 
 def auth_package_create(context, data_dict=None):
-    log.info("package_create %r %r", context, data_dict)
-
     skip_custom_auth = not data_dict
     if not skip_custom_auth:
         dataset_has_org = data_dict.get('owner_org', None)
@@ -397,8 +408,6 @@ def auth_package_create(context, data_dict=None):
 
 
 def auth_package_update(context, data_dict=None):
-    log.info("package_update %r %r", context, data_dict)
-
     skip_custom_auth = not data_dict
     if not skip_custom_auth:
         dataset_has_org = data_dict.get('owner_org', None)

@@ -9,6 +9,14 @@ Features:
 - de-emphasise Organisations and Groups
 - add a financial year tag
 
+To allow users to upload datasets before becoming members of organizations, this plugin requires datasets without an owner organization to be public.
+
+Also set the following config options to allow uploads:
+
+    ckan.auth.create_unowned_dataset = true
+    ckan.auth.create_dataset_if_not_in_organization = true
+
+
 ------------
 Installation
 ------------
