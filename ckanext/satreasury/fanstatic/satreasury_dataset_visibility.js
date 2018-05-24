@@ -3,7 +3,6 @@
  * public always and disable dropdown
  */
 this.ckan.module('satreasury_dataset_visibility', function ($, _) {
-  console.log("installing");
   return {
     currentValue: false,
     options: {
