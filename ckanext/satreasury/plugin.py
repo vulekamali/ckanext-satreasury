@@ -149,6 +149,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
             ],
+            'private': [
+                tk.get_validator('ignore_missing'),
+                tk.get_validator('boolean_validator'),
+            ],
         })
         return schema
 

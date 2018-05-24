@@ -98,6 +98,8 @@
         </div>
       </div>
     {% endblock %}
+  {% else %}
+    <input name="private" type="hidden" value="True" />
   {% endif %}
 
   {% if show_organizations_selector and show_visibility_selector %}
