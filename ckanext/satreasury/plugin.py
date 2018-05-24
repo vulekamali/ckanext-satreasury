@@ -1,9 +1,22 @@
+"""
+
+Core plugin for the South African Budget Portal vulekamali
+
+- Adds fields to datasets
+  - provinces
+  - financial year
+  - sphere (of government)
+  - methodology
+- Adds fields to organizations like contact details
+- Disables non-sysadmin access to /users which lists usernames
+- Disallows non-sysadmins from making datasets without an owner organization public.
+"""
 import datetime
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 import ckan.logic.schema as default_schemas
-
+import ckan.logic.auth as ckan_auth
 import ckanext.satreasury.helpers as helpers
 import logging
 
@@ -148,6 +161,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             'methodology': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
+            ],
+            'private': [
+                tk.get_validator('ignore_missing'),
+                tk.get_validator('boolean_validator'),
             ],
         })
         return schema
@@ -362,6 +379,8 @@ class SATreasurySecurityPlugin(plugins.SingletonPlugin):
     def get_auth_functions(self):
         return {
             'user_list': auth_user_list,
+            'package_create': auth_package_create,
+            'package_update': auth_package_update,
         }
 
 
@@ -370,3 +389,35 @@ def auth_user_list(context, data_dict=None):
         'success': False,
         'msg': "Access denied."
     }
+
+
+def auth_package_create(context, data_dict=None):
+    skip_custom_auth = not data_dict
+    if not skip_custom_auth:
+        dataset_has_org = data_dict.get('owner_org', None)
+        dataset_is_public = not tk.asbool(data_dict.get('private', 'true'))
+        if not dataset_has_org and dataset_is_public:
+            log.info("rejecting package_create: dataset_has_org=%r, dataset_is_public=%r",
+                     dataset_has_org, dataset_is_public)
+            return {
+                'success': False,
+                'msg': 'Cannot make a dataset public without an organization'
+            }
+
+    return ckan_auth.create.package_create(context, data_dict)
+
+
+def auth_package_update(context, data_dict=None):
+    skip_custom_auth = not data_dict
+    if not skip_custom_auth:
+        dataset_has_org = data_dict.get('owner_org', None)
+        dataset_is_public = not tk.asbool(data_dict.get('private', 'true'))
+        if not dataset_has_org and dataset_is_public:
+            log.info("rejecting package_update: dataset_has_org=%r, dataset_is_public=%r",
+                     dataset_has_org, dataset_is_public)
+            return {
+                'success': False,
+                'msg': 'Cannot make a dataset public without an organization'
+            }
+
+    return ckan_auth.update.package_update(context, data_dict)
