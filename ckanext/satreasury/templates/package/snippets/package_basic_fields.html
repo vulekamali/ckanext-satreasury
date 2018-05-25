@@ -1,7 +1,14 @@
 {% import 'macros/form.html' as form %}
 
+{% set user_is_sysadmin = h.check_access('sysadmin') %}
+
 {% block package_basic_fields_title %}
-  {{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. A descriptive title'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target'}) }}
+  <span class="info-block">
+    <i class="fa fa-info-circle"></i>
+    We suggest that you upload different years of annual datasets and reports
+    individually with the relevant year in the title.
+  </span>
+  {{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. Gauteng Health expenditure review 2018-19'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target'}) }}
 {% endblock %}
 
 {% block package_basic_fields_url %}
@@ -16,15 +23,17 @@
 {% block package_basic_fields_custom %}{% endblock %}
 
 {% block package_basic_fields_description %}
-  {{ form.markdown('notes', id='field-notes', label=_('Description'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes) }}
+  {{ form.markdown('notes', id='field-notes', label=_('Description'), placeholder=_('What data did you use or gather and what analysis was performed? Why will users find your data interesting?'), value=data.notes, error=errors.notes) }}
 {% endblock %}
 
 {{ form.markdown('methodology', label=_('Methodology'), id='field-methodology', placeholder=_('What methodology did you follow when gathering and analysing the data? Include things that will help others understand the possible limitations to your dataset or analysis. What should they bear in mind when working with your data?'), value=data.methodology, error=errors.methodology) }}
 
+{% if user_is_sysadmin %}
 {% block package_basic_fields_tags %}
   {% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?'} %}
   {{ form.input('tag_string', id='field-tags', label=_('Tags'), placeholder=_('eg. economy, mental health, government'), value=data.tag_string, error=errors.tags, classes=['control-full'], attrs=tag_attrs) }}
 {% endblock %}
+{% endif %}
 
 {% block package_basic_fields_license %}
 <div class="control-group">
@@ -32,7 +41,7 @@
   <label class="control-label" for="field-license">{{ _("License") }}</label>
   <div class="controls">
     <select id="field-license" name="license_id" data-module="autocomplete">
-      {% set existing_license_id = data.get('license_id') %}
+      {% set existing_license_id = data.get('license_id') or 'notspecified' %}
       {% for license_id, license_desc in h.license_options(existing_license_id) %}
         <option value="{{ license_id }}" {% if existing_license_id == license_id %}selected="selected"{% endif %}>{{ license_desc }}</option>
       {% endfor %}
@@ -44,6 +53,10 @@
         License definitions and additional information can be found
         at <a href="http://opendefinition.org/licenses/">opendefinition.org</a>
       {% endtrans %}
+      <br>
+      If you'd like help selecting a license, leave this field on
+      <em>License not specified</em> for now
+      and <a href="mailto:info@vulekamali.gov.za" target="_blank">contact us</a> after submission at <a href="mailto:info@vulekamali.gov.za" target="_blank">info@vulekamali.gov.za</a>.
     </span>
   </div>
 </div>
@@ -109,6 +122,7 @@
   {% endif %}
 
 
+{% if user_is_sysadmin %}
   {% if data.id and h.check_access('package_delete', {'id': data.id}) and data.state != 'active' %}
     <div class="control-group">
       <label for="field-state" class="control-label">{{ _('State') }}</label>
@@ -120,5 +134,6 @@
       </div>
     </div>
   {% endif %}
+{% endif %}
 
 {% endblock %}
