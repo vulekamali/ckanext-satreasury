@@ -1,0 +1,10 @@
+{% ckan_extends %}
+
+{% block page_primary_action %}
+  {% if h.check_access('organization_create') %}
+    {% link_for _('Add Organization'), controller='organization', action='new', class_='btn btn-primary', icon='plus-square' %}
+  {% elif c.userobj %}
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdGPUJoOSmEGtLdI-MiX6GBogrBi_VQ1WwEkI-GQez_oZlh4g/viewform?usp=pp_url&entry.1303075391={{ c.user }}" class="btn btn-primary" target="_blank"><i class="fa fa-plus-square"></i> Request New Organization</a>
+
+  {% endif %}
+{% endblock %}
