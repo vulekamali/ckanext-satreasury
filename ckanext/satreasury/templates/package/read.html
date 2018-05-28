@@ -1,6 +1,29 @@
 {% ckan_extends %}
 
-{% block package_notes %}
+{% block package_description %}
+    {% if pkg.private %}
+      <span class="dataset-private label label-inverse pull-right">
+        <i class="fa fa-lock"></i>
+        {{ _('Private') }}
+      </span>
+      <br />
+      <em>
+        Your dataset is Private and not accessible to the public yet. Find and {{ h.link_to(_('Join or Add your organisation'), h.url_for(controller='organization', action='index')) }} to make your dataset public.
+      </em>
+    {% endif %}
+    <h1>
+      {% block page_heading %}
+        {{ h.dataset_display_name(pkg) }}
+        {% if pkg.state.startswith('draft') %}
+          [{{ _('Draft') }}]
+        {% endif %}
+        {% if pkg.state == 'deleted' %}
+          [{{ _('Deleted') }}]
+        {% endif %}
+      {% endblock %}
+    </h1>
+
+      {% block package_notes %}
       {% if pkg.notes %}
         <h2>About this Dataset</h2>
         <div class="notes embedded-content">
@@ -15,4 +38,5 @@
         </div>
       {% endif %}
 
+      {% endblock %}
 {% endblock %}
