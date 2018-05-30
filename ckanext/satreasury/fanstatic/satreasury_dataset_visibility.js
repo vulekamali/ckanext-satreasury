@@ -12,21 +12,26 @@ this.ckan.module('satreasury_dataset_visibility', function ($, _) {
     initialize: function() {
       $.proxyAll(this, /_on/);
       this.options.organizations = $('#field-organizations'),
-      this.options.visibility = $('#field-private-satreasury'),
-      this.options.currentValue = this.options.visibility.val();
+      this.options.private_select_field = $('#field-private-select'),
+      this.options.private_input_field = $('#field-private-input'),
+      this.options.currentValue = this.options.private_select_field.val();
       this.options.organizations.on('change', this._onOrganizationChange);
       this._onOrganizationChange();
     },
     _onOrganizationChange: function() {
       var value = this.options.organizations.val();
       if (value) {
-        this.options.visibility
+        this.options.private_select_field
           .prop('disabled', false)
           .val('False');
+        this.options.private_input_field
+          .prop('disabled', true);
       } else {
-        this.options.visibility
+        this.options.private_select_field
           .prop('disabled', true)
           .val('True');
+        this.options.private_input_field
+          .prop('disabled', false);
       }
     }
   };
