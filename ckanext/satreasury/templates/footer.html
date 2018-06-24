@@ -1,28 +1,28 @@
 {% ckan_extends %}
 
 {% block footer_links %}
-  <li>This datastore powers the <a href="https://vulekamali.gov.za">vulekamali.gov.za</a> website.</li>
+  <li>This datastore powers the <a target="_blank" href="https://vulekamali.gov.za">vulekamali.gov.za</a> website.</li>
   <li>&nbsp;</li>
-  <li><a href="https://vulekamali.gov.za/">vulekamali Budget Portal</a></li>
-  <li><a href="https://vulekamali.gov.za/2017-18/about">About vulekamali</a></li>
+  <li><a target="_blank" href="https://vulekamali.gov.za/">vulekamali Budget Portal</a></li>
+  <li><a target="_blank" href="https://vulekamali.gov.za/2017-18/about">About vulekamali</a></li>
 {% endblock %}
 
 {% block footer_links_ckan %}
   {% set api_url = 'http://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version) %}
   <li>&nbsp;</li>
-  <li><a href="{{ api_url }}">{{ _('CKAN API Documentation') }}</a></li>
+  <li><a target="_blank" href="{{ api_url }}">{{ _('CKAN API Documentation') }}</a></li>
 {% endblock %}
 
 {% block footer_attribution %}
-  <a href="https://vulekamali.gov.za/"><img src="/vm-logo.png" height="75" class="vm-logo"></a>
+  <a target="_blank" href="https://vulekamali.gov.za/"><img src="/vm-logo.png" height="75" class="vm-logo"></a>
 {% endblock %}
 
 {% block footer_content %}
   {{ super() }}
 
   <div class="logos">
-    <a href="http://www.treasury.gov.za/"><img src="/treasury-logo.jpg" height="75"></a>
-    <a href="https://imaliyethu.org.za/"><img src="/imali-yethu-logo.png" height="75"></a>
+    <a target="_blank" href="http://www.treasury.gov.za/"><img src="/treasury-logo.jpg" height="75"></a>
+    <a target="_blank" href="https://imaliyethu.org.za/"><img src="/imali-yethu-logo.png" height="75"></a>
   </div>
 {% endblock %}
 

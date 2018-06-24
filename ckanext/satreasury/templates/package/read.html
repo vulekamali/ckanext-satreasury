@@ -7,9 +7,10 @@
         {{ _('Private') }}
       </span>
       <br />
-      <em>
-        Your dataset is Private and not accessible to the public yet. Find and {{ h.link_to(_('Join or Add your organisation'), h.url_for(controller='organization', action='index')) }} to make your dataset public.
-      </em>
+      <div>
+        Your dataset is Private and not accessible to the public yet. Find or add your organisation to make your dataset public.
+        <a href="/organization" class="organisation-cta-button">Find or add your organisation</a>
+      </div>
     {% endif %}
     <h1>
       {% block page_heading %}

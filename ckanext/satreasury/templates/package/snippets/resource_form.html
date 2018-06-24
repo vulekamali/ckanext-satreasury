@@ -1,0 +1,20 @@
+{% ckan_extends %}
+
+{% block save_button %}
+{% resource 'satreasury/button_loading_state.js' %}
+<button class="btn btn-primary" name="save" value="go-metadata" type="submit" data-module="button_loading_state" >{% block save_button_text %}{{ _('Finish') }}{% endblock %}</button>
+{% endblock %}
+
+
+{% block basic_fields_format %}
+{% endblock %}
+
+
+{% block basic_fields_name %}
+{{ form.input('name', id='field-name', label=_('Name'), placeholder=_('eg. Gauteng Health Equipment Costs.csv'), value=data.name, error=errors.name, classes=['control-full']) }}
+{% endblock %}
+
+
+{% block again_button %}
+  <button class="btn btn-default" name="save" value="again" type="submit">{{ _('Upload & add another file') }}</button>
+{% endblock %}

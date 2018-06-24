@@ -6,7 +6,7 @@
   {% endif %}
 
   {% if not h.check_access('organization_update', {'id': c.group_dict.id}) and c.userobj %}
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfKZt71-U2TE-TvQL68zXBDwk9rtTBda51OB122KL2Jj0r6NQ/viewform?usp=pp_url&entry.710943976={{ c.userobj.fullname|urlencode }}&entry.1663367893={{ c.userobj.email|urlencode }}&entry.1303075391={{ c.user|urlencode }}&entry.855169840={{ c.group_dict.name|urlencode }}" class="btn btn-primary" target="_blank"><i class="fa fa-plus-square"></i> Join this organisation</a>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfKZt71-U2TE-TvQL68zXBDwk9rtTBda51OB122KL2Jj0r6NQ/viewform?usp=pp_url&entry.710943976={{ c.userobj.fullname|urlencode }}&entry.1663367893={{ c.userobj.email|urlencode }}&entry.1303075391={{ c.user|urlencode }}&entry.855169840={{ c.group_dict.name|urlencode }}" class="btn btn-primary join-organisation-cta" target="_blank"><i class="fa fa-plus-square"></i> Click to join this organisation</a>
   {% endif %}
 
 {% endblock %}
