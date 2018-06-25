@@ -41,3 +41,9 @@ window.NREUM||(NREUM={}),__nr_require=function(e,t,n){function r(n){if(!t[n]){va
       {{ super() }}
       {% resource 'satreasury/satreasury.css' %}
     {% endblock %}
+
+    {% block bodytag %}
+      data-site-root="{{ h.url_for('/', locale='default', qualified=true) }}" 
+      data-locale-root="{{ h.url_for('/', qualified=true) }}"
+      data-satreasury-path="{{ request.path }}"
+    {% endblock %}

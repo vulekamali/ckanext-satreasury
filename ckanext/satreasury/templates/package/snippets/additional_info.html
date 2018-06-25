@@ -12,23 +12,23 @@
     </tr>
   {% endif %}
 
-  {% if pkg_dict.province %}
-    <tr>
-      <th scope="row" class="dataset-label">{{ _('Province') }}</th>
-      <td class="dataset-details">
-        {% for province in pkg_dict.province %}
-        <p>{{ province }}</p>
-        {% endfor %}
-      </td>
-    </tr>
-  {% endif %}
-
   {% if pkg_dict.sphere %}
     <tr>
       <th scope="row" class="dataset-label">{{ _('Sphere') }}</th>
       <td class="dataset-details">
         {% for sphere in pkg_dict.sphere %}
         <p>{{ sphere }}</p>
+        {% endfor %}
+      </td>
+    </tr>
+  {% endif %}
+
+  {% if pkg_dict.province %}
+    <tr>
+      <th scope="row" class="dataset-label">{{ _('Province') }}</th>
+      <td class="dataset-details">
+        {% for province in pkg_dict.province %}
+        <p>{{ province }}</p>
         {% endfor %}
       </td>
     </tr>

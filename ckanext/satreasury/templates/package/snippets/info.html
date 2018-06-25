@@ -9,16 +9,16 @@
         <dd><nobr>{% link_for financial_year, controller='package', action='search', vocab_financial_years=financial_year %}</nobr></dd>
         {% endfor %}
       {% endif %}
-      {% if pkg.province %}
-        <dt>{{ _('Province') }}</dt>
-        {% for province in pkg.province %}
-        <dd><nobr>{% link_for province, controller='package', action='search', vocab_provinces=province %}</nobr></dd>
-        {% endfor %}
-      {% endif %}
       {% if pkg.sphere %}
         <dt>{{ _('Sphere') }}</dt>
         {% for sphere in pkg.sphere %}
         <dd><nobr>{% link_for sphere, controller='package', action='search', vocab_spheres=sphere %}</nobr></dd>
+        {% endfor %}
+      {% endif %}
+      {% if pkg.province %}
+        <dt>{{ _('Province') }}</dt>
+        {% for province in pkg.province %}
+        <dd><nobr>{% link_for province, controller='package', action='search', vocab_provinces=province %}</nobr></dd>
         {% endfor %}
       {% endif %}
       {% if pkg.functions %}
