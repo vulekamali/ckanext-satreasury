@@ -11,14 +11,18 @@ Core plugin for the South African Budget Portal vulekamali
 - Disables non-sysadmin access to /users which lists usernames
 - Disallows non-sysadmins from making datasets without an owner organization public.
 """
-import datetime
 
+from ckan.common import config
+
+import ckan.logic.auth as ckan_auth
+import ckan.logic.schema as default_schemas
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
-import ckan.logic.schema as default_schemas
-import ckan.logic.auth as ckan_auth
 import ckanext.satreasury.helpers as helpers
+import datetime
 import logging
+import os
+import requests
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +61,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     plugins.implements(plugins.IFacets)
     plugins.implements(plugins.IDatasetForm)
     plugins.implements(plugins.ITemplateHelpers)
+    plugins.implements(plugins.IDomainObjectModification, inherit=True)
 
     # IConfigurer
     def update_config(self, config_):
@@ -181,6 +186,48 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             'latest_financial_year': helpers.latest_financial_year,
             'packages_for_latest_financial_year': helpers.packages_for_latest_financial_year,
         }
+
+    # IDomainObjectModification
+
+    def notify(self, entity, operation):
+        if build_trigger_enabled():
+            if entity.owner_org:
+                user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
+                context = {'user': user['name']}
+                org = tk.get_action('organization_show')(context, {'id': entity.owner_org})
+                if org['name'] != 'national-treasury':
+                    trigger_build()
+
+
+def get_travis_token():
+    return os.environ.get(
+        'CKAN_SATREASURY_TRAVIS_TOKEN',
+        config.get('satreasury.travis_token')
+    )
+
+
+def build_trigger_enabled():
+    return tk.asbool(os.environ.get(
+        'CKAN_SATREASURY_BUILD_TRIGGER_ENABLED',
+        config.get('satreasury.build_trigger_enabled', True)
+    ))
+
+
+def trigger_build():
+    token = get_travis_token()
+    payload = {
+        'request': {
+            'branch': 'master',
+            'config': {'env': {'REMOTE_TRIGGER': 'true'}},
+        }
+    }
+    headers = {
+        "Travis-API-Version": "3",
+        "Authorization": "token %s" % token,
+    }
+    url = "https://api.travis-ci.org/repo/OpenUpSA%2Fstatic-budget-portal/requests"
+    r = requests.post(url, json=payload, headers=headers)
+    r.raise_for_status()
 
 
 def create_financial_years():
