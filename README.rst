@@ -9,13 +9,18 @@ Features:
 - de-emphasise Organisations and Groups
 - add a financial year tag
 
-To allow users to upload datasets before becoming members of organizations, this plugin requires datasets without an owner organization to be public.
+To allow users to upload datasets before becoming members of organizations, this plugin requires datasets without an owner organization to be private.
 
 Also set the following config options to allow uploads::
 
     ckan.auth.create_unowned_dataset = true
     ckan.auth.create_dataset_if_not_in_organization = true
 
+Changes to datasets owned by other organisations than ``national-treasury`` trigger Travis-CI builds of https://travis-ci.org/OpenUpSA/static-budget-portal.
+
+To give the installation access, set ``CKAN_SATREASURY_TRAVIS_TOKEN`` or ``satreasury.travis_token``.
+
+To disable this, set ``CKAN_SATREASURY_BUILD_TRIGGER_ENABLED`` or ``satreasury.build_trigger_enabled`` to "false".
 
 ------------
 Installation
