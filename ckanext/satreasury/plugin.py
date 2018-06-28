@@ -192,7 +192,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     def notify(self, entity, operation):
         if build_trigger_enabled():
-            if isinstance(entity, model.Package): and entity.owner_org:
+            if isinstance(entity, model.Package) and entity.owner_org:
                 user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
                 context = {'user': user['name']}
                 org = tk.get_action('organization_show')(context, {'id': entity.owner_org})
