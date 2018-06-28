@@ -16,6 +16,7 @@ from ckan.common import config
 
 import ckan.logic.auth as ckan_auth
 import ckan.logic.schema as default_schemas
+import ckan.model as model
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 import ckanext.satreasury.helpers as helpers
@@ -191,7 +192,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     def notify(self, entity, operation):
         if build_trigger_enabled():
-            if entity.owner_org:
+            if isinstance(entity, model.Package): and entity.owner_org:
                 user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
                 context = {'user': user['name']}
                 org = tk.get_action('organization_show')(context, {'id': entity.owner_org})
@@ -217,8 +218,13 @@ def trigger_build():
     token = get_travis_token()
     payload = {
         'request': {
+            'message': 'Rebuild with new/modified dataset',
             'branch': 'master',
-            'config': {'env': {'REMOTE_TRIGGER': 'true'}},
+            'config': {
+                'merge_mode': 'deep_merge',
+                'branches': {'except': []},
+                'env': {'REMOTE_TRIGGER': 'true'}
+            },
         }
     }
     headers = {
@@ -228,6 +234,7 @@ def trigger_build():
     url = "https://api.travis-ci.org/repo/OpenUpSA%2Fstatic-budget-portal/requests"
     r = requests.post(url, json=payload, headers=headers)
     r.raise_for_status()
+    log.debug(r.text)
 
 
 def create_financial_years():
