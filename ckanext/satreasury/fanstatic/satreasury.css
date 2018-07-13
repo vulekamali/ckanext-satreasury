@@ -81,7 +81,10 @@ a:focus {
   .context-info .nums dl dt:first-child {
     margin-top: 0px; }
 .context-info .nums dl dd {
-  font-size: 26px; }
+  font-size: 26px;
+  line-height: 23px;
+  padding-bottom: 0.5em;
+}
 
 [role=main] {
   min-height: 250px; }

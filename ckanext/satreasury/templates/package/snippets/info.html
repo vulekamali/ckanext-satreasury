@@ -3,6 +3,12 @@
 {% block nums %}
   <div class="nums">
     <dl>
+      {% if pkg.categories %}
+        <dt>{{ _('Category') }}</dt>
+        {% for category in pkg.categories %}
+        <dd>{% link_for category, controller='package', action='search', vocab_categories=category %}</dd>
+        {% endfor %}
+      {% endif %}
       {% if pkg.financial_year %}
         <dt>{{ _('Financial Year') }}</dt>
         {% for financial_year in pkg.financial_year %}
