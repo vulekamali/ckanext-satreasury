@@ -275,3 +275,8 @@ a:focus {
   position: relative;
   top: 2px;
 }
+
+/* hide the remote URL option from non-admins */
+.non-sysadmin #field-image-upload + a.btn + a.btn {
+    display: none !important;
+}
