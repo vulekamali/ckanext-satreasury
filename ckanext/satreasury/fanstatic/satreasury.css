@@ -100,10 +100,6 @@ a:focus {
   padding-right: 20px;
 }
 
-.controls > input {
-  width: 100% !important;
-}
-
 .select2-choices {
   min-height: 70px !important;
 }
@@ -274,4 +270,9 @@ a:focus {
   margin-right: 10px;
   position: relative;
   top: 2px;
+}
+
+/* hide the remote URL option from non-admins */
+.non-sysadmin #field-image-upload + a.btn + a.btn {
+    display: none !important;
 }

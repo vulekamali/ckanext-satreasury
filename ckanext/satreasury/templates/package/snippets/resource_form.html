@@ -7,8 +7,16 @@
 
 
 {% block basic_fields_format %}
+{% if h.check_access('sysadmin') %}
+{{ super() }}
+{% endif %}
 {% endblock %}
 
+{% block basic_fields_url %}
+<div class="{% if h.check_access('sysadmin') %}sysadmin{% else %}non-sysadmin{% endif %}">
+  {{ super() }}
+</div>
+{% endblock %}
 
 {% block basic_fields_name %}
 {{ form.input('name', id='field-name', label=_('Name'), placeholder=_('eg. Gauteng Health Equipment Costs.csv'), value=data.name, error=errors.name, classes=['control-full']) }}
