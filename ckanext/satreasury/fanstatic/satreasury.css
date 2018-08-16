@@ -100,10 +100,6 @@ a:focus {
   padding-right: 20px;
 }
 
-.controls > input {
-  width: 100% !important;
-}
-
 .select2-choices {
   min-height: 70px !important;
 }
