@@ -7,6 +7,9 @@
 
 
 {% block basic_fields_format %}
+{% if h.check_access('sysadmin') %}
+{{ super() }}
+{% endif %}
 {% endblock %}
 
 {% block basic_fields_url %}
