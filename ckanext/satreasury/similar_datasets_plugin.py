@@ -36,6 +36,7 @@ def get_similar_datasets(id, max_num=5):
         +dataset_type:dataset
         +state:active
         +capacity:public
+        -organization:national-treasury
         '''.format(site_id)
     results = solr.more_like_this(q=query,
                                   mltfl=fields_to_compare,
@@ -46,7 +47,6 @@ def get_similar_datasets(id, max_num=5):
     print('Similar datasets for {}:'.format(id))
     for doc in results.docs:
         log.debug('  {id} (score {score})'.format(**doc))
-        print('  {id} (score {score})'.format(**doc))
     return [json.loads(doc['validated_data_dict']) for doc in results.docs]
 
 
@@ -54,4 +54,4 @@ class SimilarDatasetsPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IPackageController, inherit=True)
 
     def after_show(self, context, pkg_dict):
-        pkg_dict['similar_datasets'] = []
+        pkg_dict['similar_datasets'] = get_similar_datasets(pkg_dict['id'])
