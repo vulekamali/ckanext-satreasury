@@ -10,7 +10,7 @@ import logging
 import json
 
 import ckan.plugins as plugins
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins.toolkit as tk
 from ckan.lib.search.common import make_connection
 from ckan.common import config
 
@@ -18,7 +18,7 @@ from ckan.common import config
 log = logging.getLogger(__name__)
 
 
-def get_similar_datasets(id, max_num=5):
+def get_similar_datasets(context, data_dict, max_num=5):
     '''
     Get similar datasets for a dataset.
     :param string id: ID of the target dataset. This must be the actual
@@ -26,6 +26,9 @@ def get_similar_datasets(id, max_num=5):
     :param int max_num: Maximum number of datasets to return.
     :return: A list of similar dataset dicts sorted by decreasing score.
     '''
+    id_or_name = data_dict['id']
+    package = tk.get_action('package_show')({'ignore_auth': True}, {'id': id_or_name})
+    id = package['id']
     solr = make_connection()
     query = 'id:"{}"'.format(id)
     fields_to_compare = 'text'
@@ -51,7 +54,9 @@ def get_similar_datasets(id, max_num=5):
 
 
 class SimilarDatasetsPlugin(plugins.SingletonPlugin):
-    plugins.implements(plugins.IPackageController, inherit=True)
+    plugins.implements(plugins.IActions)
 
-    def after_show(self, context, pkg_dict):
-        pkg_dict['similar_datasets'] = get_similar_datasets(pkg_dict['id'])
+    def get_actions(self):
+        return {
+            'similar_datasets': get_similar_datasets,
+        }
