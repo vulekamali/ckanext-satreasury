@@ -17,13 +17,12 @@ from ckan.common import config
 
 log = logging.getLogger(__name__)
 
+MAX_NUM = 5
 
-def get_similar_datasets(context, data_dict, max_num=5):
+def get_similar_datasets(context, data_dict):
     '''
     Get similar datasets for a dataset.
-    :param string id: ID of the target dataset. This must be the actual
-        ID, passing the name is not supported.
-    :param int max_num: Maximum number of datasets to return.
+    :param string id: ID or nameof the target dataset.
     :return: A list of similar dataset dicts sorted by decreasing score.
     '''
     id_or_name = data_dict['id']
@@ -45,7 +44,7 @@ def get_similar_datasets(context, data_dict, max_num=5):
                                   mltfl=fields_to_compare,
                                   fl=fields_to_return,
                                   fq=filter_query,
-                                  rows=max_num)
+                                  rows=MAX_NUM)
     log.debug('Similar datasets for {}:'.format(id))
     print('Similar datasets for {}:'.format(id))
     for doc in results.docs:
