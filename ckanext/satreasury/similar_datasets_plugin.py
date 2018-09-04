@@ -46,7 +46,6 @@ def get_similar_datasets(context, data_dict):
                                   fq=filter_query,
                                   rows=MAX_NUM)
     log.debug('Similar datasets for {}:'.format(id))
-    print('Similar datasets for {}:'.format(id))
     for doc in results.docs:
         log.debug('  {id} (score {score})'.format(**doc))
     return [json.loads(doc['validated_data_dict']) for doc in results.docs]
