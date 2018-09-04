@@ -16,7 +16,8 @@
                                 'sha256-mtMLyijtipS3K5breIQL20Lvun2UQxDm4AcZAuNRDqg='
                                 'sha256-whe0wKbJ7tv4Xpr1z80XaXa5mwbnipoSbdm4QId9gmg=';
                      frame-src https://www.youtube.com
-                               https://docs.google.com;
+                               https://docs.google.com
+                               https://openspending.org;
                      img-src 'self'
                              http://gravatar.com
                              https://gravatar.com
@@ -43,7 +44,7 @@ window.NREUM||(NREUM={}),__nr_require=function(e,t,n){function r(n){if(!t[n]){va
     {% endblock %}
 
     {% block bodytag %}
-      data-site-root="{{ h.url_for('/', locale='default', qualified=true) }}" 
+      data-site-root="{{ h.url_for('/', locale='default', qualified=true) }}"
       data-locale-root="{{ h.url_for('/', qualified=true) }}"
       data-satreasury-path="{{ request.path }}"
     {% endblock %}
