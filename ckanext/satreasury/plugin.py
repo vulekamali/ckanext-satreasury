@@ -7,6 +7,10 @@ Core plugin for the South African Budget Portal vulekamali
   - financial year
   - sphere (of government)
   - methodology
+  - notes_short
+  - key_points
+  - importance
+  - usage
 - Adds fields to organizations like contact details
 - Disables non-sysadmin access to /users which lists usernames
 - Disallows non-sysadmins from making datasets without an owner organization public.
@@ -123,6 +127,22 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_converter('convert_from_extras'),
                 tk.get_validator('ignore_missing')
             ],
+            'notes_short': [
+                tk.get_converter('convert_from_extras'),
+                tk.get_validator('ignore_missing')
+            ],
+            'usage': [
+                tk.get_converter('convert_from_extras'),
+                tk.get_validator('ignore_missing')
+            ],
+            'key_points': [
+                tk.get_converter('convert_from_extras'),
+                tk.get_validator('ignore_missing')
+            ],
+            'importance': [
+                tk.get_converter('convert_from_extras'),
+                tk.get_validator('ignore_missing')
+            ],
         })
         return schema
 
@@ -165,6 +185,22 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_converter('convert_to_tags')('functions')
             ],
             'methodology': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_extras')
+            ],
+            'notes_short': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_extras')
+            ],
+            'key_points': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_extras')
+            ],
+            'importance': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_extras')
+            ],
+            'usage': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
             ],

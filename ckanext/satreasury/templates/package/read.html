@@ -25,6 +25,12 @@
     </h1>
 
       {% block package_notes %}
+      {% if pkg.notes_short %}
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'notes_short')) }}
+        </div>
+      {% endif %}
+
       {% if pkg.notes %}
         <h2>About this Dataset</h2>
         <div class="notes embedded-content">
@@ -36,6 +42,27 @@
         <h2>Methodology Used in Gathering and Analysis</h2>
         <div class="notes embedded-content">
           {{ h.render_markdown(h.get_translated(pkg, 'methodology')) }}
+        </div>
+      {% endif %}
+
+      {% if pkg.key_points %}
+        <h2>Key points</h2>
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'key_points')) }}
+        </div>
+      {% endif %}
+
+      {% if pkg.importance %}
+        <h2>Why is it important?</h2>
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'importance')) }}
+        </div>
+      {% endif %}
+
+      {% if pkg.usage %}
+        <h2>How can it be accessed and used?</h2>
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'usage')) }}
         </div>
       {% endif %}
 
