@@ -11,6 +11,7 @@ Core plugin for the South African Budget Portal vulekamali
   - key_points
   - importance
   - usage
+  - categories (a way of grouping datasets, kind-of "publication type")
 - Adds fields to organizations like contact details
 - Disables non-sysadmin access to /users which lists usernames
 - Disallows non-sysadmins from making datasets without an owner organization public.
@@ -78,6 +79,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     def dataset_facets(self, facets_dict, package_type):
         del facets_dict['tags']
         facets_dict['vocab_financial_years'] = 'Financial Year'
+        facets_dict['vocab_categories'] = 'Dataset Category'
         facets_dict['vocab_spheres'] = 'Sphere of Government'
         facets_dict['vocab_provinces'] = 'Province'
         facets_dict['vocab_functions'] = 'Government Functions'
@@ -121,6 +123,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             ],
             'functions': [
                 tk.get_converter('convert_from_tags')('functions'),
+                tk.get_validator('ignore_missing')
+            ],
+            'categories': [
+                tk.get_converter('convert_from_tags')('categories'),
                 tk.get_validator('ignore_missing')
             ],
             'methodology': [
@@ -184,6 +190,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('functions')
             ],
+            'categories': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_tags')('categories')
+            ],
             'methodology': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
@@ -219,6 +229,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             'provinces': load_provinces,
             'spheres': load_spheres,
             'functions': load_functions,
+            'categories': load_categories,
             'active_financial_years': helpers.active_financial_years,
             'latest_financial_year': helpers.latest_financial_year,
             'packages_for_latest_financial_year': helpers.packages_for_latest_financial_year,
@@ -391,6 +402,25 @@ def load_spheres():
     except tk.ObjectNotFound:
         return None
 
+
+def create_categories():
+    """ Ensure category vocabulary exists
+    """
+    user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
+    context = {'user': user['name']}
+    try:
+        tk.get_action('vocabulary_show')(context, {'id': 'categories'})
+    except tk.ObjectNotFound:
+        tk.get_action('vocabulary_create')(context, {'name': 'categories'})
+
+
+def load_categories():
+    create_categories()
+    try:
+        tag_list = tk.get_action('tag_list')
+        return tag_list(data_dict={'vocabulary_id': 'categories'})
+    except tk.ObjectNotFound:
+        return None
 
 class SATreasuryOrganizationPlugin(plugins.SingletonPlugin, tk.DefaultOrganizationForm):
     """ Plugin for the SA National Treasury CKAN website.
