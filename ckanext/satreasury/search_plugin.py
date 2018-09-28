@@ -274,7 +274,7 @@ def package_search(context, data_dict):
         # Add them back so extensions can use them on after_search
         data_dict['extras'] = extras
 
-        if result_fl and not extras['fl_compatible']:
+        if result_fl and not extras.get('fl_compatible', False):
             for package in query.results:
                 if package.get('extras'):
                     package.update(package['extras'] )
