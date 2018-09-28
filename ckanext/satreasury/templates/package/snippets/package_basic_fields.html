@@ -28,10 +28,18 @@
 {% block package_basic_fields_custom %}{% endblock %}
 
 {% block package_basic_fields_description %}
+  {{ form.markdown('notes_short', id='field-notes-short', label=_('Short Description'), placeholder=_('Describe this dataset in one line.'), value=data.notes_short, error=errors.notes_short) }}
+
   {{ form.markdown('notes', id='field-notes', label=_('Description'), placeholder=_('What data did you use or gather and what analysis was performed? Why will users find your data interesting?'), value=data.notes, error=errors.notes) }}
 {% endblock %}
 
 {{ form.markdown('methodology', label=_('Methodology'), id='field-methodology', placeholder=_('What methodology did you follow when gathering and analysing the data? Include things that will help others understand the possible limitations to your dataset or analysis. What should they bear in mind when working with your data?'), value=data.methodology, error=errors.methodology) }}
+
+{{ form.markdown('key_points', label=_('Key Points'), id='field-key_points', placeholder=_('What are some key features or points to note? Add them in a list like\n  - point 1\n  - point 2\n  - point 3'), value=data.key_points, error=errors.key_points) }}
+
+{{ form.markdown('importance', label=_('Why is it important?'), id='field-importance', placeholder=_('Explain why this is relevant to vulekamali. How does this support the information available here?'), value=data.importance, error=errors.importance) }}
+
+{{ form.markdown('usage', label=_('How can it be accessed and used?'), id='field-usage', placeholder=_('Provide the key steps a user should take to access key data, e.g. \n  1. Visit the X Data Portal\n  2. Log in as Guest\n  3. Choose a category\n  4. See the example charts\n  5. Use the download button next to a chart to download the data behind it.'), value=data.usage, error=errors.usage) }}
 
 {% if user_is_sysadmin %}
   {% block package_basic_fields_tags %}
