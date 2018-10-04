@@ -9,7 +9,7 @@ Core plugin for the South African Budget Portal vulekamali
   - methodology
   - notes_short
   - key_points
-  - importance
+  - use_for
   - usage
   - categories (a way of grouping datasets, kind-of "publication type")
 - Adds fields to organizations like contact details
@@ -145,7 +145,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_converter('convert_from_extras'),
                 tk.get_validator('ignore_missing')
             ],
-            'importance': [
+            'use_for': [
                 tk.get_converter('convert_from_extras'),
                 tk.get_validator('ignore_missing')
             ],
@@ -206,7 +206,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
             ],
-            'importance': [
+            'use_for': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
             ],
