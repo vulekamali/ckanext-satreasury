@@ -59,6 +59,8 @@ PROVINCES = [
 
 SPHERES = ['national', 'provincial']
 
+TRAVIS_COMMIT_MESSAGE = 'Rebuild with new/modified dataset'
+
 
 class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     """ Plugin for the SA National Treasury CKAN website.
@@ -239,12 +241,13 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     def notify(self, entity, operation):
         if build_trigger_enabled():
-            if isinstance(entity, model.Package) and entity.owner_org:
-                user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
-                context = {'user': user['name']}
-                org = tk.get_action('organization_show')(context, {'id': entity.owner_org})
-                if org['name'] != 'national-treasury':
+            if build_already_queued():
+                log.info("Not triggering build because already queued")
+            else:
+                if isinstance(entity, model.Package) and entity.owner_org:
                     trigger_build()
+        else:
+            log.info("Not triggering build because disabled")
 
 
 def get_travis_token():
@@ -261,11 +264,28 @@ def build_trigger_enabled():
     ))
 
 
+def queued_build_filter(request):
+    return (any(build['state'] == 'created' for build in request['builds'])
+            and request['commit']['message'] == TRAVIS_COMMIT_MESSAGE)
+
+
+def build_already_queued():
+    headers = {
+        "Travis-API-Version": "3",
+    }
+    url = "https://api.travis-ci.org/repo/OpenUpSA%2Fstatic-budget-portal/requests"
+    r = requests.get(url, headers=headers)
+    r.raise_for_status()
+    pending = filter(queued_build_filter, r.json()['requests'])
+    log.info("%d queued builds", len(pending))
+    return pending
+
+
 def trigger_build():
     token = get_travis_token()
     payload = {
         'request': {
-            'message': 'Rebuild with new/modified dataset',
+            'message': TRAVIS_COMMIT_MESSAGE,
             'branch': 'master',
             'config': {
                 'merge_mode': 'deep_merge',
