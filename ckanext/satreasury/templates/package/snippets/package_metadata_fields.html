@@ -70,6 +70,17 @@
     </div>
   </div>
 
+  <div class="control-group">
+    <label class="control-label" for="field-dimensions">{{ _("Dimensions") }}</label>
+    <div class="controls">
+      <select id="field-dimensions" name="dimensions" data-module="autocomplete" multiple>
+        {% for dimension in h.dimensions() %}
+          <option value="{{ dimension }}" {% if dimension in data.get('dimensions', []) %}selected="selected"{% endif %}>{{ dimension }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
   <hr />
 
   {% set user_is_sysadmin = h.check_access('sysadmin') %}
