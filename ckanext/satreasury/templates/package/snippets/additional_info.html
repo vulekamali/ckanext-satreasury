@@ -45,5 +45,16 @@
     </tr>
   {% endif %}
 
+  {% if pkg_dict.dimensions %}
+    <tr>
+      <th scope="row" class="dataset-label">{{ _('Dimensions') }}</th>
+      <td class="dataset-details">
+        {% for dimension in pkg_dict.dimensions %}
+        <p>{{ dimension }}</p>
+        {% endfor %}
+      </td>
+    </tr>
+  {% endif %}
+
   {{ super() }}
 {% endblock %}

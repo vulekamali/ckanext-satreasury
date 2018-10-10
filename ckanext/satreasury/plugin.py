@@ -4,6 +4,7 @@ Core plugin for the South African Budget Portal vulekamali
 
 - Adds fields to datasets
   - provinces
+  - dimensions
   - financial year
   - sphere (of government)
   - methodology
@@ -85,6 +86,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         facets_dict['vocab_spheres'] = 'Sphere of Government'
         facets_dict['vocab_provinces'] = 'Province'
         facets_dict['vocab_functions'] = 'Government Functions'
+        facets_dict['vocab_dimensions'] = 'Dimensions'
         # move to the end
         facets_dict['organization'] = facets_dict.pop('organization')
         facets_dict['license_id'] = facets_dict.pop('license_id')
@@ -99,6 +101,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         del facets_dict['tags']
         facets_dict['vocab_financial_years'] = 'Financial Year'
         facets_dict['vocab_provinces'] = 'Province'
+        facets_dict['vocab_dimensions'] = 'Dimensions'
         # move to the end
         facets_dict['res_format'] = facets_dict.pop('res_format')
         facets_dict['organization'] = facets_dict.pop('organization')
@@ -117,6 +120,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             ],
             'province': [
                 tk.get_converter('convert_from_tags')('provinces'),
+                tk.get_validator('ignore_missing')
+            ],
+            'dimensions': [
+                tk.get_converter('convert_from_tags')('dimensions'),
                 tk.get_validator('ignore_missing')
             ],
             'sphere': [
@@ -184,6 +191,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('provinces')
             ],
+            'dimensions': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_tags')('dimensions')
+            ],
             'sphere': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_tags')('spheres')
@@ -229,6 +240,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         return {
             'financial_years': load_financial_years,
             'provinces': load_provinces,
+            'dimensions': load_dimensions,
             'spheres': load_spheres,
             'functions': load_functions,
             'categories': load_categories,
@@ -391,6 +403,14 @@ def load_provinces():
     try:
         tag_list = tk.get_action('tag_list')
         return tag_list(data_dict={'vocabulary_id': 'provinces'})
+    except tk.ObjectNotFound:
+        return None
+
+
+def load_dimensions():
+    try:
+        tag_list = tk.get_action('tag_list')
+        return tag_list(data_dict={'vocabulary_id': 'dimensions'})
     except tk.ObjectNotFound:
         return None
 

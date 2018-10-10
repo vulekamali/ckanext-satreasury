@@ -33,6 +33,12 @@
         <dd>{% link_for functions, controller='package', action='search', vocab_functions=functions %}</dd>
         {% endfor %}
       {% endif %}
+      {% if pkg.dimensions %}
+        <dt>{{ _('Dimensions') }}</dt>
+        {% for dimension in pkg.dimensions %}
+        <dd>{% link_for dimension, controller='package', action='search', vocab_dimensions=dimension %}</dd>
+        {% endfor %}
+      {% endif %}
       <dt>{{ _('Followers') }}</dt>
       <dd>{{ h.SI_number_span(h.follow_count('dataset', pkg.id)) }}</dd>
     </dl>
