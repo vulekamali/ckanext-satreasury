@@ -1,16 +1,6 @@
 {% ckan_extends %}
 
 {% block package_additional_info %}
-  {% if pkg_dict.categories %}
-    <tr>
-      <th scope="row" class="dataset-label">{{ _('Category') }}</th>
-      <td class="dataset-details">
-        {% for category in pkg_dict.categories %}
-        <p>{{ category }}</p>
-        {% endfor %}
-      </td>
-    </tr>
-  {% endif %}
 
   {% if pkg_dict.financial_year %}
     <tr>
