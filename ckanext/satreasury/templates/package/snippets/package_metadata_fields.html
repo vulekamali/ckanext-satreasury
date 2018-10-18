@@ -8,18 +8,6 @@
   Select all the relevant options that apply by selecting the field and then
   choosing from available values.
 </p>
-  <div class="control-group">
-    <label class="control-label" for="field-categories">{{ _("Category") }}</label>
-    <div class="controls">
-      <select id="field-categories" name="categories" data-module="autocomplete" multiple>
-        <option value="">(none)</option>
-        {% set categories = h.categories() %}
-        {% for category in categories %}
-          <option value="{{ category }}" {% if category in data.get('categories', []) %}selected="selected"{% endif %}>{{ category }}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
 
   <div class="control-group">
     <label class="control-label" for="field-financial_year">{{ _("Financial Year") }}</label>
