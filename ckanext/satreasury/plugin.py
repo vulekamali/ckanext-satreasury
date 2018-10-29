@@ -301,8 +301,8 @@ def trigger_build():
     }
     url = "https://api.travis-ci.org/repo/OpenUpSA%2Fstatic-budget-portal/requests"
     r = requests.post(url, json=payload, headers=headers)
-    r.raise_for_status()
     log.debug(r.text)
+    r.raise_for_status()
 
 
 def create_financial_years():
