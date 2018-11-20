@@ -29,7 +29,6 @@ import datetime
 import logging
 import os
 import requests
-from pprint import pformat
 
 log = logging.getLogger(__name__)
 
@@ -110,28 +109,27 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     # IDatasetForm
     def show_package_schema(self):
-        log.info("\n\nSHOW_PACKAGE_SCHEMA\n\n")
         schema = super(SATreasuryDatasetPlugin, self).show_package_schema()
         schema['tags']['__extras'].append(tk.get_converter('free_tags_only'))
         schema.update({
             'financial_year': [
-                logging_converter(tk.get_converter('convert_from_tags')('financial_years')),
+                idempotent_converter(tk.get_converter('convert_from_tags')('financial_years')),
                 tk.get_validator('ignore_missing')
             ],
             'province': [
-                tk.get_converter('convert_from_tags')('provinces'),
+                idempotent_converter(tk.get_converter('convert_from_tags')('provinces')),
                 tk.get_validator('ignore_missing')
             ],
             'dimensions': [
-                tk.get_converter('convert_from_tags')('dimensions'),
+                idempotent_converter(tk.get_converter('convert_from_tags')('dimensions')),
                 tk.get_validator('ignore_missing')
             ],
             'sphere': [
-                logging_converter(tk.get_converter('convert_from_tags')('spheres')),
+                idempotent_converter(tk.get_converter('convert_from_tags')('spheres')),
                 tk.get_validator('ignore_missing')
             ],
             'functions': [
-                tk.get_converter('convert_from_tags')('functions'),
+                idempotent_converter(tk.get_converter('convert_from_tags')('functions')),
                 tk.get_validator('ignore_missing')
             ],
             'methodology': [
@@ -253,14 +251,14 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             log.info("Not triggering build because disabled")
 
 
-def logging_converter(callable):
-    def logging_callable(key, data, errors, context):
-        log.debug("key: %r", key)
-        log.debug("data:\n%s", pformat(data))
-        log.debug("before: %s", pformat(data[key]))
-        callable(key, data, errors, context)
-        log.debug("after: %s\n\n", pformat(data[key]))
-    return logging_callable
+def idempotent_converter(callable):
+    """
+    Woraround for https://github.com/stadt-karlsruhe/ckanext-extractor/issues/16
+    """
+    def idempotent_callable(key, data, errors, context):
+        if type(data[key]) != list:
+            callable(key, data, errors, context)
+    return idempotent_callable
 
 
 def get_travis_token():
