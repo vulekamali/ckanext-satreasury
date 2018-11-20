@@ -29,6 +29,7 @@ import datetime
 import logging
 import os
 import requests
+from pprint import pformat
 
 log = logging.getLogger(__name__)
 
@@ -109,11 +110,12 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
 
     # IDatasetForm
     def show_package_schema(self):
+        log.info("\n\nSHOW_PACKAGE_SCHEMA\n\n")
         schema = super(SATreasuryDatasetPlugin, self).show_package_schema()
         schema['tags']['__extras'].append(tk.get_converter('free_tags_only'))
         schema.update({
             'financial_year': [
-                tk.get_converter('convert_from_tags')('financial_years'),
+                logging_converter(tk.get_converter('convert_from_tags')('financial_years')),
                 tk.get_validator('ignore_missing')
             ],
             'province': [
@@ -125,7 +127,7 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_validator('ignore_missing')
             ],
             'sphere': [
-                tk.get_converter('convert_from_tags')('spheres'),
+                logging_converter(tk.get_converter('convert_from_tags')('spheres')),
                 tk.get_validator('ignore_missing')
             ],
             'functions': [
@@ -249,6 +251,16 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                     trigger_build()
         else:
             log.info("Not triggering build because disabled")
+
+
+def logging_converter(callable):
+    def logging_callable(key, data, errors, context):
+        log.debug("key: %r", key)
+        log.debug("data:\n%s", pformat(data))
+        log.debug("before: %s", pformat(data[key]))
+        callable(key, data, errors, context)
+        log.debug("after: %s\n\n", pformat(data[key]))
+    return logging_callable
 
 
 def get_travis_token():
