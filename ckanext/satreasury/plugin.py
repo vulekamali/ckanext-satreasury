@@ -113,23 +113,23 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         schema['tags']['__extras'].append(tk.get_converter('free_tags_only'))
         schema.update({
             'financial_year': [
-                idempotent_converter(tk.get_converter('convert_from_tags')('financial_years')),
+                tk.get_converter('convert_from_tags')('financial_years'),
                 tk.get_validator('ignore_missing')
             ],
             'province': [
-                idempotent_converter(tk.get_converter('convert_from_tags')('provinces')),
+                tk.get_converter('convert_from_tags')('provinces'),
                 tk.get_validator('ignore_missing')
             ],
             'dimensions': [
-                idempotent_converter(tk.get_converter('convert_from_tags')('dimensions')),
+                tk.get_converter('convert_from_tags')('dimensions'),
                 tk.get_validator('ignore_missing')
             ],
             'sphere': [
-                idempotent_converter(tk.get_converter('convert_from_tags')('spheres')),
+                tk.get_converter('convert_from_tags')('spheres'),
                 tk.get_validator('ignore_missing')
             ],
             'functions': [
-                idempotent_converter(tk.get_converter('convert_from_tags')('functions')),
+                tk.get_converter('convert_from_tags')('functions'),
                 tk.get_validator('ignore_missing')
             ],
             'methodology': [
@@ -249,16 +249,6 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                     trigger_build()
         else:
             log.info("Not triggering build because disabled")
-
-
-def idempotent_converter(callable):
-    """
-    Woraround for https://github.com/stadt-karlsruhe/ckanext-extractor/issues/16
-    """
-    def idempotent_callable(key, data, errors, context):
-        if type(data[key]) != list:
-            callable(key, data, errors, context)
-    return idempotent_callable
 
 
 def get_travis_token():
