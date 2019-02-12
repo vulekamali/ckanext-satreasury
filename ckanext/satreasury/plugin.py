@@ -61,6 +61,17 @@ SPHERES = ['national', 'provincial']
 
 TRAVIS_COMMIT_MESSAGE = 'Rebuild with new/modified dataset'
 
+DIMENSIONS = [
+    'Budget phase',
+    'Department',
+    'Economic classification 1',
+    'Economic classification 2',
+    'Economic classification 3',
+    'Economic classification 4',
+    'Financial year',
+    'Programme',
+    'Sub-programme',
+]
 
 class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
     """ Plugin for the SA National Treasury CKAN website.
@@ -396,7 +407,27 @@ def load_provinces():
         return None
 
 
+def create_dimensions():
+    """ Ensure all necessary dimension tags exist.
+    """
+    user = tk.get_action('get_site_user')({'ignore_auth': True}, {})
+    context = {'user': user['name']}
+    try:
+        vocab = tk.get_action('vocabulary_show')(context, {'id': 'dimensions'})
+    except tk.ObjectNotFound:
+        vocab = tk.get_action('vocabulary_create')(context, {'name': 'dimensions'})
+
+    tag_create = tk.get_action('tag_create')
+    existing = set(t['name'] for t in vocab['tags'])
+    for dimension in set(DIMENSIONS) - existing:
+        tag_create(context, {
+            'name': dimension,
+            'vocabulary_id': vocab['id'],
+        })
+
+
 def load_dimensions():
+    create_dimensions()
     try:
         tag_list = tk.get_action('tag_list')
         return tag_list(data_dict={'vocabulary_id': 'dimensions'})
