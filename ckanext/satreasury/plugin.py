@@ -59,6 +59,7 @@ PROVINCES = [
 
 SPHERES = ['national', 'provincial']
 
+TRAVIS_ENDPOINT = "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal/requests"
 TRAVIS_COMMIT_MESSAGE = 'Rebuild with new/modified dataset'
 
 DIMENSIONS = [
@@ -285,8 +286,7 @@ def build_already_queued():
     headers = {
         "Travis-API-Version": "3",
     }
-    url = "https://api.travis-ci.org/repo/OpenUpSA%2Fstatic-budget-portal/requests"
-    r = requests.get(url, headers=headers)
+    r = requests.get(TRAVIS_ENDPOINT, headers=headers)
     r.raise_for_status()
     pending = filter(queued_build_filter, r.json()['requests'])
     log.info("%d queued builds", len(pending))
@@ -310,8 +310,7 @@ def trigger_build():
         "Travis-API-Version": "3",
         "Authorization": "token %s" % token,
     }
-    url = "https://api.travis-ci.org/repo/OpenUpSA%2Fstatic-budget-portal/requests"
-    r = requests.post(url, json=payload, headers=headers)
+    r = requests.post(TRAVIS_ENDPOINT, json=payload, headers=headers)
     log.debug(r.text)
     r.raise_for_status()
 
