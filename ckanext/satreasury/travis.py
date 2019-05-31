@@ -4,6 +4,7 @@ import os
 import requests
 
 from ckan.common import config
+import ckan.plugins.toolkit as tk
 
 TRAVIS_ENDPOINT = "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal"
 TRAVIS_COMMIT_MESSAGE = 'Rebuild with new/modified dataset'
