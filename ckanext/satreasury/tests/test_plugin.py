@@ -91,6 +91,39 @@ class TestNotifyMethod(unittest.TestCase):
     @patch(
         'ckanext.satreasury.plugin.travis.build_trigger_enabled',
         return_value=True)
+    def test_notify_build_request_but_no_build(self, build_trigger_enabled_mock):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                responses.GET,
+                "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal/builds",
+                json={
+                    'builds': []},
+                status=200,
+                content_type='application/json')
+            rsps.add(
+                responses.POST,
+                "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal/requests",
+                json={
+                    'request': {
+                        'id': 12345}},
+                status=200,
+                content_type='application/json')
+            rsps.add(
+                responses.GET,
+                "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal/request/12345",
+                json={
+                    'builds': []},
+                status=200,
+                content_type='application/json')
+
+            self.plugin.notify(self.entity, None)
+            message = "vulekamali will be updated in less than an hour. <a href='https://travis-ci.org/vulekamali/static-budget-portal/builds/' >Check progress of the update process.</a>"
+            self.flash_success_mock.assert_called_with(
+                message, allow_html=True)
+
+    @patch(
+        'ckanext.satreasury.plugin.travis.build_trigger_enabled',
+        return_value=True)
     def test_notify_build_trigger_errored(self, build_trigger_enabled_mock):
         with responses.RequestsMock() as rsps:
             rsps.add(

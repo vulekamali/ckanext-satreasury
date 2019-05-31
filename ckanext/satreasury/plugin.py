@@ -266,16 +266,13 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                         ckan_helpers.flash_error("An error occurred when updating the static site data. Technical details: %s" % e.message)
                         return
 
-                    # Sleep a while to wait for the build to be created
-                    time.sleep(2)
-
                     # Get the new pending builds
                     pending_builds = travis.get_builds_from_created_request(created_request)
                     if not pending_builds:
-                        ckan_helpers.flash_error("An error occurred when updating the static site data. Build hasn't been triggered")
-                        return
-
-                    show_success_message_for_build(pending_builds[0])
+                        # Link to the list of builds if the build hasn't been created yet
+                        ckan_helpers.flash_success("vulekamali will be updated in less than an hour. <a href='%s' >Check progress of the update process.</a>" % travis.TRAVIS_WEB_URL, allow_html=True)
+                    else:
+                        show_success_message_for_build(pending_builds[0])
         else:
             log.info("Not triggering build because disabled")
 
