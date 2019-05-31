@@ -30,6 +30,7 @@ import datetime
 import logging
 import os
 import requests
+import time
 
 import travis
 
@@ -260,16 +261,17 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
             else:
                 if isinstance(entity, model.Package) and entity.owner_org:
                     try:
-                        build_request = travis.trigger_build()
+                        created_request = travis.trigger_build()
                     except requests.exceptions.HTTPError as e:
                         ckan_helpers.flash_error("An error occurred when updating the static site data. Technical details: %s" % e.message)
                         return
 
-                    # TODO: use the request id to get the build id
-                    builds = build_request['builds']
                     # TODO: do we need to wait here for the build to actually be triggered?
+                    # Sleep a while to wait for the build to be created
+                    time.sleep(5)
+
                     # Get the new pending builds
-                    pending_builds = travis.get_queued_builds()
+                    pending_builds = travis.get_builds_from_created_request(created_request)
                     if not pending_builds:
                         ckan_helpers.flash_error("An error occurred when updating the static site data. Build hasn't been triggered")
                         return
