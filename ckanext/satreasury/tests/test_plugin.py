@@ -21,7 +21,7 @@ class TestNotify(unittest.TestCase):
         self.plugin = SATreasuryDatasetPlugin()
 
     @responses.activate
-    @patch('ckanext.satreasury.plugin.build_trigger_enabled', return_value=True)
+    @patch('ckanext.satreasury.plugin.travis.build_trigger_enabled', return_value=True)
     @patch('ckanext.satreasury.plugin.ckan_helpers.flash_success')
     def test_notify_already_building(self, flash_success_mock, build_trigger_enabled_mock):
         with responses.RequestsMock() as rsps:
@@ -33,7 +33,7 @@ class TestNotify(unittest.TestCase):
             flash_success_mock.assert_called_with(message, allow_html=True)
 
     @responses.activate
-    @patch('ckanext.satreasury.plugin.build_trigger_enabled', return_value=True)
+    @patch('ckanext.satreasury.plugin.travis.build_trigger_enabled', return_value=True)
     @patch('ckanext.satreasury.plugin.ckan_helpers.flash_success')
     def test_notify_build_triggered(self, flash_success_mock, build_trigger_enabled_mock):
         self.get_builds_calls = 0
@@ -49,6 +49,7 @@ class TestNotify(unittest.TestCase):
                 return (200, {}, json.dumps(response_body))
 
         with responses.RequestsMock() as rsps:
+            # TODO add response for get request
             # if isinstance(entity, model.Package) and entity.owner_org:
             rsps.add_callback(responses.GET, "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal/builds",
                               callback=get_builds_callback,

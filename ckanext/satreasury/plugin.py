@@ -31,6 +31,8 @@ import logging
 import os
 import requests
 
+import travis
+
 log = logging.getLogger(__name__)
 
 FUNCTIONS = [
@@ -59,11 +61,6 @@ PROVINCES = [
 ]
 
 SPHERES = ['national', 'provincial']
-
-TRAVIS_ENDPOINT = "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal"
-TRAVIS_COMMIT_MESSAGE = 'Rebuild with new/modified dataset'
-TRAVIS_WEB_URL = "https://travis-ci.org/vulekamali/static-budget-portal/builds/"
-# TRAVIS_WEB_URL = "https://travis-ci.org/vulekamali/static-budget-portal/builds/535878234"
 
 DIMENSIONS = [
     'Budget phase',
@@ -254,92 +251,36 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         }
 
     # IDomainObjectModification
-
     def notify(self, entity, operation):
-        if build_trigger_enabled():
-            pending_builds = build_already_queued()
-            log.info(pending_builds)
+        if travis.build_trigger_enabled():
+            pending_builds = travis.get_queued_builds()
             if pending_builds:
                 log.info("Not triggering build because already queued")
                 show_success_message_for_build(pending_builds[0])
             else:
                 if isinstance(entity, model.Package) and entity.owner_org:
                     try:
-                        trigger_build()
+                        build_request = travis.trigger_build()
                     except requests.exceptions.HTTPError as e:
-                        ckan_helpers.flash_success("An error occurred when updating the static site data. Technical details: %s" % e.message)
+                        ckan_helpers.flash_error("An error occurred when updating the static site data. Technical details: %s" % e.message)
                         return
 
+                    # TODO: use the request id to get the build id
+                    builds = build_request['builds']
                     # TODO: do we need to wait here for the build to actually be triggered?
                     # Get the new pending builds
-                    pending_builds = build_already_queued()
+                    pending_builds = travis.get_queued_builds()
                     if not pending_builds:
-                        ckan_helpers.flash_success("An error occurred when updating the static site data. Build hasn't been triggered")
+                        ckan_helpers.flash_error("An error occurred when updating the static site data. Build hasn't been triggered")
                         return
 
                     show_success_message_for_build(pending_builds[0])
         else:
             log.info("Not triggering build because disabled")
 
-# "An error occurred when updating the static site data. Technical details: FooBarError: reticulating splines"_
-
 def show_success_message_for_build(build):
-    url = TRAVIS_WEB_URL + str(build['id'])
+    url = travis.get_build_url(build)
     ckan_helpers.flash_success("vulekamali will be updated in less than an hour. <a href='%s' >Check progress of the update process.</a>" % url, allow_html=True)
-
-def get_travis_token():
-    return os.environ.get(
-        'CKAN_SATREASURY_TRAVIS_TOKEN',
-        config.get('satreasury.travis_token')
-    )
-
-
-def build_trigger_enabled():
-    return tk.asbool(os.environ.get(
-        'CKAN_SATREASURY_BUILD_TRIGGER_ENABLED',
-        config.get('satreasury.build_trigger_enabled', True)
-    ))
-
-
-def queued_build_filter(build):
-    return build['commit']['message'] == TRAVIS_COMMIT_MESSAGE
-
-
-def build_already_queued():
-    headers = {
-        "Travis-API-Version": "3",
-    }
-    params = {
-        "build.state": "created",
-        "branch.name": "master",
-        "sort_by": "started_at:desc",
-    }
-    r = requests.get(TRAVIS_ENDPOINT + '/builds', headers=headers, params=params)
-    r.raise_for_status()
-    return list(filter(queued_build_filter, r.json()['builds']))
-
-
-def trigger_build():
-    token = get_travis_token()
-    payload = {
-        'request': {
-            'message': TRAVIS_COMMIT_MESSAGE,
-            'branch': 'master',
-            'config': {
-                'merge_mode': 'deep_merge',
-                'branches': {'except': []},
-                'env': {'REMOTE_TRIGGER': 'true'}
-            },
-        }
-    }
-    headers = {
-        "Travis-API-Version": "3",
-        "Authorization": "token %s" % token,
-    }
-    r = requests.post(TRAVIS_ENDPOINT + '/requests', json=payload, headers=headers)
-    log.debug(r.text)
-    r.raise_for_status()
-
 
 def create_financial_years():
     """ Ensure all necessary financial years tags exist.
