@@ -17,22 +17,22 @@ Core plugin for the South African Budget Portal vulekamali
 - Disallows non-sysadmins from making datasets without an owner organization public.
 """
 
-from ckan.common import config
+import datetime
+import logging
+import os
+import time
 
+import requests
+
+import ckan.lib.helpers as ckan_helpers
 import ckan.logic.auth as ckan_auth
 import ckan.logic.schema as default_schemas
 import ckan.model as model
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
-import ckan.lib.helpers as ckan_helpers
 import ckanext.satreasury.helpers as helpers
-import datetime
-import logging
-import os
-import requests
-import time
-
 import travis
+from ckan.common import config
 
 log = logging.getLogger(__name__)
 
@@ -266,9 +266,8 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                         ckan_helpers.flash_error("An error occurred when updating the static site data. Technical details: %s" % e.message)
                         return
 
-                    # TODO: do we need to wait here for the build to actually be triggered?
                     # Sleep a while to wait for the build to be created
-                    time.sleep(5)
+                    time.sleep(2)
 
                     # Get the new pending builds
                     pending_builds = travis.get_builds_from_created_request(created_request)
