@@ -55,3 +55,8 @@ do::
     cd ckanext-satreasury
     python setup.py develop
     pip install -r dev-requirements.txt
+
+
+To run the tests, run::
+
+     nosetests
