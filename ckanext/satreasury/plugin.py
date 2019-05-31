@@ -17,18 +17,22 @@ Core plugin for the South African Budget Portal vulekamali
 - Disallows non-sysadmins from making datasets without an owner organization public.
 """
 
-from ckan.common import config
+import datetime
+import logging
+import os
+import time
 
+import requests
+
+import ckan.lib.helpers as ckan_helpers
 import ckan.logic.auth as ckan_auth
 import ckan.logic.schema as default_schemas
 import ckan.model as model
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 import ckanext.satreasury.helpers as helpers
-import datetime
-import logging
-import os
-import requests
+import travis
+from ckan.common import config
 
 log = logging.getLogger(__name__)
 
@@ -58,9 +62,6 @@ PROVINCES = [
 ]
 
 SPHERES = ['national', 'provincial']
-
-TRAVIS_ENDPOINT = "https://api.travis-ci.org/repo/vulekamali%2Fstatic-budget-portal/requests"
-TRAVIS_COMMIT_MESSAGE = 'Rebuild with new/modified dataset'
 
 DIMENSIONS = [
     'Budget phase',
@@ -251,69 +252,33 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
         }
 
     # IDomainObjectModification
-
     def notify(self, entity, operation):
-        if build_trigger_enabled():
-            if build_already_queued():
+        if travis.build_trigger_enabled():
+            pending_builds = travis.get_queued_builds()
+            if pending_builds:
                 log.info("Not triggering build because already queued")
+                show_success_message_for_build(pending_builds[0])
             else:
                 if isinstance(entity, model.Package) and entity.owner_org:
-                    trigger_build()
+                    try:
+                        created_request = travis.trigger_build()
+                    except requests.exceptions.HTTPError as e:
+                        ckan_helpers.flash_error("An error occurred when updating the static site data. Technical details: %s" % e.message)
+                        return
+
+                    # Get the new pending builds
+                    pending_builds = travis.get_builds_from_created_request(created_request)
+                    if not pending_builds:
+                        # Link to the list of builds if the build hasn't been created yet
+                        ckan_helpers.flash_success("vulekamali will be updated in less than an hour. <a href='%s' >Check progress of the update process.</a>" % travis.TRAVIS_WEB_URL, allow_html=True)
+                    else:
+                        show_success_message_for_build(pending_builds[0])
         else:
             log.info("Not triggering build because disabled")
 
-
-def get_travis_token():
-    return os.environ.get(
-        'CKAN_SATREASURY_TRAVIS_TOKEN',
-        config.get('satreasury.travis_token')
-    )
-
-
-def build_trigger_enabled():
-    return tk.asbool(os.environ.get(
-        'CKAN_SATREASURY_BUILD_TRIGGER_ENABLED',
-        config.get('satreasury.build_trigger_enabled', True)
-    ))
-
-
-def queued_build_filter(request):
-    return (any(build['state'] == 'created' for build in request['builds'])
-            and request['commit']['message'] == TRAVIS_COMMIT_MESSAGE)
-
-
-def build_already_queued():
-    headers = {
-        "Travis-API-Version": "3",
-    }
-    r = requests.get(TRAVIS_ENDPOINT, headers=headers)
-    r.raise_for_status()
-    pending = filter(queued_build_filter, r.json()['requests'])
-    log.info("%d queued builds", len(pending))
-    return pending
-
-
-def trigger_build():
-    token = get_travis_token()
-    payload = {
-        'request': {
-            'message': TRAVIS_COMMIT_MESSAGE,
-            'branch': 'master',
-            'config': {
-                'merge_mode': 'deep_merge',
-                'branches': {'except': []},
-                'env': {'REMOTE_TRIGGER': 'true'}
-            },
-        }
-    }
-    headers = {
-        "Travis-API-Version": "3",
-        "Authorization": "token %s" % token,
-    }
-    r = requests.post(TRAVIS_ENDPOINT, json=payload, headers=headers)
-    log.debug(r.text)
-    r.raise_for_status()
-
+def show_success_message_for_build(build):
+    url = travis.get_build_url(build)
+    ckan_helpers.flash_success("vulekamali will be updated in less than an hour. <a href='%s' >Check progress of the update process.</a>" % url, allow_html=True)
 
 def create_financial_years():
     """ Ensure all necessary financial years tags exist.
