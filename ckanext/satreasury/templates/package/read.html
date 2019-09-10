@@ -52,6 +52,13 @@
         </div>
       {% endif %}
 
+      {% if pkg.importance %}
+        <h2>Why is it important?</h2>
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'importance')) }}
+        </div>
+      {% endif %}
+
       {% if pkg.use_for %}
         <h2>What can it be used for?</h2>
         <div class="notes embedded-content">

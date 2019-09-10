@@ -10,6 +10,7 @@ Core plugin for the South African Budget Portal vulekamali
   - methodology
   - notes_short
   - key_points
+  - importance
   - use_for
   - usage
 - Adds fields to organizations like contact details
@@ -161,6 +162,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_converter('convert_from_extras'),
                 tk.get_validator('ignore_missing')
             ],
+            'importance': [
+                tk.get_converter('convert_from_extras'),
+                tk.get_validator('ignore_missing')
+            ],
             'use_for': [
                 tk.get_converter('convert_from_extras'),
                 tk.get_validator('ignore_missing')
@@ -219,6 +224,10 @@ class SATreasuryDatasetPlugin(plugins.SingletonPlugin, tk.DefaultDatasetForm):
                 tk.get_converter('convert_to_extras')
             ],
             'key_points': [
+                tk.get_validator('ignore_missing'),
+                tk.get_converter('convert_to_extras')
+            ],
+            'importance': [
                 tk.get_validator('ignore_missing'),
                 tk.get_converter('convert_to_extras')
             ],

@@ -37,6 +37,8 @@
 
 {{ form.markdown('key_points', label=_('Key Points'), id='field-key_points', placeholder=_('What are some key features or points to note? Add them in a list like\n  - point 1\n  - point 2\n  - point 3'), value=data.key_points, error=errors.key_points) }}
 
+{{ form.markdown('importance', label=_('Why is it important?'), id='field-importance', placeholder=_(''), value=data.importance, error=errors.importance) }}
+
 {{ form.markdown('use_for', label=_('What can it be used for?'), id='field-use_for', placeholder=_('Explain why this is relevant to vulekamali. How does this support the information available here?'), value=data.use_for, error=errors.use_for) }}
 
 {{ form.markdown('usage', label=_('How can it be accessed and used?'), id='field-usage', placeholder=_('Provide the key steps a user should take to access key data, e.g. \n  1. Visit the X Data Portal\n  2. Log in as Guest\n  3. Choose a category\n  4. See the example charts\n  5. Use the download button next to a chart to download the data behind it.'), value=data.usage, error=errors.usage) }}
