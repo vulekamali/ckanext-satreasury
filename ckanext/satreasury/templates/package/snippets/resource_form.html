@@ -13,9 +13,12 @@
 {% endblock %}
 
 {% block basic_fields_url %}
-<div class="{% if h.check_access('sysadmin') %}sysadmin{% else %}non-sysadmin{% endif %}">
+<span class="info-block info-block-small controls">
+  <i class="fa fa-info-circle"></i>
+  {{ _('Prefer uploading a copy of files over external links, since external links could break when the other site is changed.') }}
+</span>
+
   {{ super() }}
-</div>
 {% endblock %}
 
 {% block basic_fields_name %}
