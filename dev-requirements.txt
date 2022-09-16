@@ -24,7 +24,7 @@ idna==2.7
 ipaddress==1.0.22
 itsdangerous==0.24
 Jinja2==2.8
-Mako==1.0.4
+Mako==1.2.2
 Markdown==2.6.7
 MarkupSafe==0.23
 mock==3.0.5
