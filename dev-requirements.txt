@@ -2,7 +2,7 @@ autopep8==1.4.4
 Babel==2.3.4
 Beaker==1.8.1
 bleach==1.5.0
-certifi==2019.3.9
+certifi==2022.12.7
 chardet==3.0.4
 -e git+https://github.com/ckan/ckan.git@2287b2ac0ca20938529cd3ab17215cd8bf6e6fe5#egg=ckan
 click==6.7
